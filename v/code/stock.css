@@ -1,0 +1,153 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+* {
+    border-radius: 5px;
+}
+
+
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 20% 40% 30% 10%;
+    grid-template-areas: "header header header" "services content event" "services content message" "footer footer footer";
+}
+
+.header {
+    grid-area: header;
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-areas: "logo title welcome";
+    flex-direction: row;
+    background-color: rgb(212, 206, 85);
+}
+
+#logo {
+    grid-area: logo;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+
+#welcome {
+    grid-area: welcome;
+    /* overflow: scroll; */
+    overflow-x: hidden;
+}
+
+
+#services {
+    grid-area: services;
+    background-color: rgba(147, 215, 11, 0.589);
+    line-height: 1.5;
+    overflow: auto;
+    resize: horizontal;
+}
+
+#content {
+    grid-area: content;
+    background-color: rgba(24, 233, 198, 0.068);
+    overflow: auto;
+}
+
+#event {
+    grid-area: event;
+    background-color: rgba(115, 179, 186, 0.747);
+    overflow: auto;
+    resize: both;
+    /* allows one to resize the grid area horizontally and vertically */
+    min-width: 220px;
+    max-width: 800px;
+    min-height: 138px;
+    max-height: 280px;
+}
+
+#message {
+    grid-area: message;
+    background-color: rgba(115, 42, 117, 0.774);
+    overflow: auto;
+    resize: both;
+    /* allows one to resize the grid area horizontally and vertically  */
+    min-width: 220px;
+    max-width: 800px;
+    min-height: 138px;
+    max-height: 300px;
+}
+
+#footer {
+    grid-area: footer;
+    background-color: rgba(0, 255, 183, 0.664);
+    overflow: auto;
+}
+
+div {
+    font-family: cursive;
+}
+
+th {
+    background-color: grey;
+}
+
+td {
+    background-color: lightgrey;
+}
+
+
+@media all and (max-width:764px) {
+    body {
+        height: auto;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 60% 40%;
+        grid-template-rows: 20% 30% 40% 10%;
+        grid-template-areas: "header header" "content content" "content content" "footer footer";
+    }
+
+    .header {
+        display: grid;
+        grid-area: header;
+        grid-template-columns: 40% 55%;
+        grid-template-rows: 100%;
+        grid-template-areas: "title welcome";
+        padding: 5px
+    }
+
+    #logo {
+        grid-area: logo;
+        display: none;
+    }
+
+    #services {
+        grid-area: services;
+        display: none;
+
+    }
+
+    #message {
+
+        display: none;
+    }
+
+    #event {
+        display: none;
+    }
+
+    #title {
+        grid-area: title;
+
+    }
+
+    #welcome {
+        grid-area: welcome;
+
+    }
+
+}
