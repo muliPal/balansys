@@ -1,108 +1,175 @@
 <html>
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-   
-    <title>Stock Collection </title>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="stock.css" />
-   
-</head>
+        <title>Stock Collection </title>
 
-<body>
+        <link rel="stylesheet" href="stock.css" />
+
+    </head>
+
+    <body>
 
 
-    <div class="header">
-        <div id="logo">
-           
+        <div class="header">
+            <div id="logo">
+  
+              
+
+            </div>
+
+            <div id="title">
                 
+                <p>STOCK MANAGEMENT SYSTEM<p>
+                <fieldset>
+                    <legend>Time</legend>
+                    <input type="date" id="todaydate" />
+                </fieldset>
+                
+            </div>
 
+            <div id="welcome">
+
+            </div>
         </div>
-        
-        <div id="title">
-          <p>STOCK MANAGEMENT SYSTEM<p>
-            <fieldset>
-                <legend>Time</legend>
-           <input type="date" id="todaydate" />
-         </fieldset>
-         </div>
 
-        <div id="welcome">
+        <div id="services">
 
+              <details open>
+                    <summary>Source_of_data</summary>
+
+                    <select>
+
+                        <option>Mama_Muraya</option>
+                        <option>B.M.J_shop</option>
+                        <option>Malimali</option>
+                        <option>Mutall</option>
+                        <option>Briadata</option>
+
+                    </select>
         </div>
-    </div>
-    
-    <div id="services">
-       
-    </div>
-    
-    <div id="content">
-        
-        <details open>
-            <summary>Source_of_data</summary>
-           
-              <select>
-         
-                <option>Mama_Muraya</option>
-                <option>B.M.J_shop</option>
-                <option>Malimali</option>
-                <option>Mutall</option>
-                <option>Briadata</option>
 
-               </select>
-
-        </details>
-
-        <table>
-            <tr>
-                <th>Item</th>
-                <th>Unit</th>
-                <th>Quantity</th>
-                <th>Buying_price</th>
-                <th>Selling_price</th>
-            </tr>
-            <tr>
-                <td>pembe wheat flour</td>
-                <td>2kg</td>
-                <td>45</td>
-                <td>170</td>
-                <td>250</td>
-            </tr>
-            <tr>
-                <td>Exe wheat flour</td>
-                <td>2kg</td>
-                <td>45</td>
-                <td>150</td>
-                <td>200</td>
-            </tr>
-            <tr>
-                <td>Ajab wheat flour</td>
-                <td>2kg</td>
-                <td>45</td>
-                <td>100</td>
-                <td>170</td>
-            </tr>
-        </table>
-        <button>Add_row</button>
-        <button>Edit</button>
+            <div id="content">
+              <table id="table_data">
+                <tbody id="table_body">
+                  <tr bgcolor="grey">
+                    <th>Date</th>
+                    <th>Invoice_No</th>
+                    <th>Source</th>
+                    <th>Item</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                  </tr>
+                  <tr bgcolor="lightgrey">
+                    <td>19/10/2023</td>
+                    <td>1948414</td>
+                    <td>Destiny_Best_supermarket</td>
+                    <td>Destiny_White_Bread</td>
+                    <td>800g</td>
+                    <td>1</td>
+                    <td>110</td>
+                  </tr>
+                  <tr bgcolor="lightgrey">
+                    <td>19/10/2023</td>
+                    <td>1948414</td>
+                    <td>Destiny_Best_supermarket</td>
+                    <td>Bella_Jumbo_Roll</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>125</td>
+                  </tr>
+                  <tr bgcolor="lightgrey">
+                    <td>19/10/2023</td>
+                    <td>1948414</td>
+                    <td>Destiny_Best_supermarket</td>
+                    <td>Destiny_Brown_Bread</td>
+                    <td>800g</td>
+                    <td>1</td>
+                    <td>110</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr id="transcription_data">
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                    <td><input type="text" class="input_data" /></td>
+                  </tr>
+                </tfoot>
+              </table>
+        <button onclick="get_data()">Add_row</button>
         <button>Save</button>
-        <button>Cancel</button>
-            
-        
-         
+
     </div>
+
 
     <div id="event">
+
 
     </div>
 
     <div id="message">
-     
+
     </div>
 
     <div id="footer">
         <p>Developed by Benard muli</p>
     </div>
+    <script>
+        // ------------------------------------------------------------------------
+        //                      Adding new row and saving data
+        // ------------------------------------------------------------------------
+        const balansys_table_body = document.getElementById("table_body");
+        //
+        // Create an empty array to store the data to.
+        const data = [];
+
+        //
+        // Retrieve the data and store in the data array.
+        function get_data() {
+            const input_fields = document.getElementsByClassName("input_data");
+            const row_data = [];
+            //
+            // Get the data from the input boxes.
+            for (let i = 0; i < input_fields.length; i++) {
+                row_data.push(input_fields[i].value);
+            }
+            //
+            // Store the data in the 'data' array
+            data.push(row_data);
+            //
+            // Checking if i got the data from the input fields.
+            console.log(row_data);
+            //
+            // This will display the data from the input box to the table
+            update_table();
+        }
+
+        //
+        // This will display the data from the input box to the table
+        // The data got from get_data is in form of an arrary and its the row data
+        // so i have to get the individual cell data and distrubute them to each td.
+        function update_table() {
+            data.forEach((row_data) => {
+                const new_row = document.createElement("tr");
+                //
+                // Create a row and append the data to each td
+                row_data.forEach((value) => {
+                    const new_cell = document.createElement("td");
+                    new_cell.textContent = value;
+                    new_row.appendChild(new_cell);
+                });
+                //
+                // Display the new row with data to the table body
+                balansys_table_body.appendChild(new_row);
+            });
+        }
+    </script>
 
 </body>
 </html>

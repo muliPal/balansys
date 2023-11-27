@@ -37,7 +37,14 @@ body {
     grid-area: content;
     color: black;
 }
+.select{
+    position: fixed;
+    width:48%;
+    color: black;
+    font-weight: bolder;
+}
 .image {
+    margin-top: 20%;
     border: 2px solid black;
 }
 

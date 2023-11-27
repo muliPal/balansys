@@ -28,6 +28,11 @@ body {
     flex-direction: row;
     background-color: rgb(212, 206, 85);
 }
+#title{
+    display: flex;
+    align-items: center;
+}
+
 
 #logo {
     grid-area: logo;
