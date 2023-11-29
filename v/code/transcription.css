@@ -21,10 +21,21 @@ body {
 
 .menu {
     grid-area: menu;
+    margin-left: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     background: #1abc9c;
     color: blue;
 }
-
+.logo{
+    display: flex;
+/*    align-items: center;
+    justify-content: space-around;*/
+}
+.name{
+    display:flex;
+}
 .view {
     grid-area: view;
     background: beige;
@@ -64,4 +75,12 @@ img {
 .foot {
     grid-area: foot;
     background: aqua;
+}
+h1{
+   font-size: 3px;
+}
+.select{
+    display: inline-block;
+/*    justify-content: space-between;*/
+    
 }
