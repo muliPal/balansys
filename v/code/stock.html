@@ -14,19 +14,21 @@
 
         <div class="header">
             <div id="logo">
-  
-              
+
+                <h1><em>Balansys</em></h1>
 
             </div>
 
             <div id="title">
-                
-                <p>STOCK MANAGEMENT SYSTEM<p>
-                <fieldset>
-                    <legend>Time</legend>
-                    <input type="date" id="todaydate" />
-                </fieldset>
-                
+
+                <div class="logo">
+
+
+                </div>
+                <div class="name">
+                    <h2>Balansys Transcription interface</h2>
+                </div>
+
             </div>
 
             <div id="welcome">
@@ -36,140 +38,162 @@
 
         <div id="services">
 
-              <details open>
-                    <summary>Source_of_data</summary>
+            <p>STOCK MANAGEMENT SYSTEM<p>
+            <fieldset>
+                <legend>Time</legend>
+                <input type="date" id="todaydate" />
+            </fieldset>
 
-                    <select>
 
-                        <option>Mama_Muraya</option>
-                        <option>B.M.J_shop</option>
-                        <option>Malimali</option>
-                        <option>Mutall</option>
-                        <option>Briadata</option>
+            <details open>
 
-                    </select>
+                <summary>Source_of_data</summary>
+
+                <select>
+
+                    <option>Mama_Muraya</option>
+                    <option>B.M.J_shop</option>
+                    <option>Malimali</option>
+                    <option>Mutall</option>
+                    <option>Briadata</option>
+
+                </select>
+            </details>
+
         </div>
 
-            <div id="content">
-              <table id="table_data">
+        <div id="content">
+            <table id="table_data">
                 <tbody id="table_body">
-                  <tr bgcolor="grey">
-                    <th>Date</th>
-                    <th>Invoice_No</th>
-                    <th>Source</th>
-                    <th>Item</th>
-                    <th>Unit</th>
-                    <th>Quantity</th>
-                    <th>Amount</th>
-                  </tr>
-                  <tr bgcolor="lightgrey">
-                    <td>19/10/2023</td>
-                    <td>1948414</td>
-                    <td>Destiny_Best_supermarket</td>
-                    <td>Destiny_White_Bread</td>
-                    <td>800g</td>
-                    <td>1</td>
-                    <td>110</td>
-                  </tr>
-                  <tr bgcolor="lightgrey">
-                    <td>19/10/2023</td>
-                    <td>1948414</td>
-                    <td>Destiny_Best_supermarket</td>
-                    <td>Bella_Jumbo_Roll</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>125</td>
-                  </tr>
-                  <tr bgcolor="lightgrey">
-                    <td>19/10/2023</td>
-                    <td>1948414</td>
-                    <td>Destiny_Best_supermarket</td>
-                    <td>Destiny_Brown_Bread</td>
-                    <td>800g</td>
-                    <td>1</td>
-                    <td>110</td>
-                  </tr>
+                    <tr bgcolor="grey">
+                        <th>Date</th>
+                        <th>Invoice_No</th>
+                        <th>Source</th>
+                        <th>Item</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr bgcolor="lightgrey">
+                        <td>19/10/2023</td>
+                        <td>1948414</td>
+                        <td>Destiny_Best_supermarket</td>
+                        <td>Destiny_White_Bread</td>
+                        <td>800g</td>
+                        <td>1</td>
+                        <td>110</td>
+                    </tr>
+                    <tr bgcolor="lightgrey">
+                        <td>19/10/2023</td>
+                        <td>1948414</td>
+                        <td>Destiny_Best_supermarket</td>
+                        <td>Bella_Jumbo_Roll</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>125</td>
+                    </tr>
+                    <tr bgcolor="lightgrey">
+                        <td>19/10/2023</td>
+                        <td>1948414</td>
+                        <td>Destiny_Best_supermarket</td>
+                        <td>Destiny_Brown_Bread</td>
+                        <td>800g</td>
+                        <td>1</td>
+                        <td>110</td>
+                    </tr>
                 </tbody>
                 <tfoot>
-                  <tr id="transcription_data">
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                    <td><input type="text" class="input_data" /></td>
-                  </tr>
+                    <tr id="transcription_data">
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                        <td><input type="text" class="input_data" /></td>
+                    </tr>
                 </tfoot>
-              </table>
-        <button onclick="get_data()">Add_row</button>
-        <button>Save</button>
+            </table>
+            <button onclick="get_data()">Add_row</button>
+            <button>Save</button>
 
-    </div>
-
-
-    <div id="event">
+        </div>
 
 
-    </div>
+        <div id="event">
 
-    <div id="message">
 
-    </div>
+        </div>
 
-    <div id="footer">
-        <p>Developed by Benard muli</p>
-    </div>
-    <script>
-        // ------------------------------------------------------------------------
-        //                      Adding new row and saving data
-        // ------------------------------------------------------------------------
-        const balansys_table_body = document.getElementById("table_body");
-        //
-        // Create an empty array to store the data to.
-        const data = [];
+        <div id="message">
 
-        //
-        // Retrieve the data and store in the data array.
-        function get_data() {
-            const input_fields = document.getElementsByClassName("input_data");
-            const row_data = [];
+        </div>
+        <div id="footer">
+
+        </div>
+
+        <div id="developer">
+
+            <p>Developers:<a href="https://dev.mutall.co.ke/tracker/portfolio/2023/muli.html">Benard muli</a>
+                <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/mogaka.html">James Mogaka</a>
+                <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/kibe.html"> James Kibe</a></p>
+
+
+        </div>
+
+        <div id="footer2">
+
+        </div>
+        <script>
+            // ------------------------------------------------------------------------
+            //                      Adding new row and saving data
+            // ------------------------------------------------------------------------
+            const balansys_table_body = document.getElementById("table_body");
             //
-            // Get the data from the input boxes.
-            for (let i = 0; i < input_fields.length; i++) {
-                row_data.push(input_fields[i].value);
+            // Create an empty array to store the data to.
+            const data = [];
+
+            //
+            // Retrieve the data and store in the data array.
+            function get_data() {
+                const input_fields = document.getElementsByClassName("input_data");
+                const row_data = [];
+                //
+                // Get the data from the input boxes.
+                for (let i = 0; i < input_fields.length; i++) {
+                    row_data.push(input_fields[i].value);
+                }
+                //
+                // Store the data in the 'data' array
+                data.push(row_data);
+                //
+                // Checking if i got the data from the input fields.
+                console.log(row_data);
+                //
+                // This will display the data from the input box to the table
+                update_table();
             }
-            //
-            // Store the data in the 'data' array
-            data.push(row_data);
-            //
-            // Checking if i got the data from the input fields.
-            console.log(row_data);
+
             //
             // This will display the data from the input box to the table
-            update_table();
-        }
-
-        //
-        // This will display the data from the input box to the table
-        // The data got from get_data is in form of an arrary and its the row data
-        // so i have to get the individual cell data and distrubute them to each td.
-        function update_table() {
-            data.forEach((row_data) => {
-                const new_row = document.createElement("tr");
-                //
-                // Create a row and append the data to each td
-                row_data.forEach((value) => {
-                    const new_cell = document.createElement("td");
-                    new_cell.textContent = value;
-                    new_row.appendChild(new_cell);
+            // The data got from get_data is in form of an arrary and its the row data
+            // so i have to get the individual cell data and distrubute them to each td.
+            function update_table() {
+                data.forEach((row_data) => {
+                    const new_row = document.createElement("tr");
+                    //
+                    // Create a row and append the data to each td
+                    row_data.forEach((value) => {
+                        const new_cell = document.createElement("td");
+                        new_cell.textContent = value;
+                        new_row.appendChild(new_cell);
+                    });
+                    //
+                    // Display the new row with data to the table body
+                    balansys_table_body.appendChild(new_row);
                 });
-                //
-                // Display the new row with data to the table body
-                balansys_table_body.appendChild(new_row);
-            });
-        }
-    </script>
+            }
+        </script>
 
-</body>
+    </body>
 </html>

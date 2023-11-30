@@ -17,7 +17,11 @@ body {
     gap: 5px;
     grid-template-columns: 20% 60% 20%;
     grid-template-rows: 20% 40% 30% 10%;
-    grid-template-areas: "header header header" "services content event" "services content message" "footer footer footer";
+    grid-template-areas: 
+        "header header header"
+        "services content event" 
+        "services content message"
+        "footer developer footer2";
 }
 
 .header {
@@ -58,7 +62,7 @@ body {
 
 #content {
     grid-area: content;
-    background-color: rgba(24, 233, 198, 0.068);
+    background-color: white;
     overflow: auto;
 }
 
@@ -91,7 +95,14 @@ body {
     background-color: rgba(0, 255, 183, 0.664);
     overflow: auto;
 }
-
+#developer{
+    grid-area: developer;
+    background-color: white;
+}
+#footer2{
+    grid-area: footer2;
+    background-color: blue;
+}
 div {
     font-family: cursive;
 }
@@ -102,6 +113,9 @@ th {
 
 td {
     background-color: lightgrey;
+}
+h1{
+   font-size: 40px;
 }
 
 
