@@ -7,6 +7,24 @@
 
         <link rel="stylesheet" href="stock.css" />
 
+        <script>
+                   window.onload=()=>{
+                let inputDate= document.getElementById("todaydate"); 
+                //
+                // Create a new Date object with the current date.
+                var currentDate = new Date();
+                //
+                // Format the date as "yyyy-MM-dd"
+                let formattedDate =
+                  currentDate.getFullYear() +
+                  '-' +
+                  ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + currentDate.getDate()).slice(-2);
+              inputDate.value = formattedDate;
+            };
+        </script>
+
     </head>
 
     <body>
@@ -26,7 +44,7 @@
 
                 </div>
                 <div class="name">
-                    <h2>Balansys Transcription interface</h2>
+                    <h2>Balansys Stock management interface</h2>
                 </div>
 
             </div>
@@ -164,6 +182,8 @@
                     row_data.push(input_fields[i].value);
                 }
                 //
+                ////clear existing data
+                data.length = 0;
                 // Store the data in the 'data' array
                 data.push(row_data);
                 //

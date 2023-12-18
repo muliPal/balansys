@@ -30,7 +30,7 @@ body {
     grid-template-columns: 25% 50% 25%;
     grid-template-areas: "logo title welcome";
     flex-direction: row;
-    background-color: rgb(212, 206, 85);
+    background-color: hsl(278, 88%, 68%);
 }
 #title{
     display: flex;
@@ -54,7 +54,7 @@ body {
 
 #services {
     grid-area: services;
-    background-color: rgba(147, 215, 11, 0.589);
+    background-color: rgba(55, 122, 131, 0.589);
     line-height: 1.5;
     overflow: auto;
     resize: horizontal;
@@ -68,7 +68,7 @@ body {
 
 #event {
     grid-area: event;
-    background-color: rgba(115, 179, 186, 0.747);
+    background-color: rgba(142, 115, 186, 0.747);
     overflow: auto;
     resize: both;
     /* allows one to resize the grid area horizontally and vertically */
@@ -80,7 +80,7 @@ body {
 
 #message {
     grid-area: message;
-    background-color: rgba(115, 42, 117, 0.774);
+    background-color: rgba(71, 42, 117, 0.137);
     overflow: auto;
     resize: both;
     /* allows one to resize the grid area horizontally and vertically  */
@@ -92,16 +92,16 @@ body {
 
 #footer {
     grid-area: footer;
-    background-color: rgba(0, 255, 183, 0.664);
+    background-color: rgba(0, 174, 255, 0.664);
     overflow: auto;
 }
 #developer{
     grid-area: developer;
-    background-color: white;
+    background-color: rgba(175, 124, 124, 0.76);
 }
 #footer2{
     grid-area: footer2;
-    background-color: blue;
+    background-color: rgb(78, 153, 202);
 }
 div {
     font-family: cursive;

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="transcription.css" />
+        <title>Test</title>
+        <style>
+            body{
+               background: wheat;
+            }
+            #content{
+                width: 400px;
+                background: whitesmoke;
+                padding: 20px;
+                padding-top: 0;
+                font-family: celibri;
+                font-size: 18px;
+                color: blue;
+                margin: 0 auto;
+                
+                max-height: 270px;
+                overflow: hidden;
+                
+                -webkit-transition: max-height 0.7s;
+                -moz-transition: max-height 0.7s;
+                transition: max-height 0.7s;
+            }
+            #content.open{
+                max-height: 1000px;
+                
+                -webkit-transition: max-height 0.7s;
+                -moz-transition: max-height 0.7s;
+                transition: max-height 0.7s;
+            }
+            #show-more{
+                background: gray;
+                color: green;
+                display: block;
+                width: 140px;
+                font-size: 24px;
+                text-transform: uppercase;
+                padding: 10px;
+                text-align: center;
+                margin: 20px auto;
+                cursor: pointer;
+            }
+        </style>
+        <script>
+            var content = document.getElementById("content");
+            var button = document.getElementById("show-more");
+            
+            button.onclick = function(){
+                if(content.className === "open"){
+                    //shrink box
+                    content.className ="";
+                }else{
+                    
+                    content.className ="open";
+                    button.innerHTML  = "show less";
+                }
+            };
+        </script>
+    </head>
+    <body>
+        <div id="content">
+            <p class="open">
+                Suggestion/Notes
+
+                - check how the code is arranged, check on the tags
+
+                ## MuliHub
+
+                - []Add selector buttons to the portfolio
+                - Start with a checkbox to each entry in the portfolio
+                - []Add event listener to each summary
+                - Try javascript for event listerner as a learning process.Do anything.
+                - []style the summary to look professional
+                - []seperate the content with view
+                - [x]Add a menu
+                - [x]choose a font - without serif
+                - [x]format the code
+                - use colors
+                - header not to scroll when your scrolling
+                - []Give us your inputs, despite messing up
+
+                ## Rentize
+
+                - []Monthly update on mutallrental
+                - []Produce monthly invoice
+
+                ## CRM(client relationship management)
+
+                - []Get directory of Oritech clients
+                - []Client mapping to be under CRM
+                - []Let the title be:
+                Oritech: building a client management system
+
+                ## Mshauri
+
+                - []Show us what you gained from the events
+
+                ## Diploma
+
+                - []Give us the colleges, charges and give a report
+
+                ## CyberCafe
+
+                - []Document the experience and services in the portal and what they do
+                -
+
+                ## General
+
+                - Try getting all your work on a excel to help the team give inputs
+            </p>
+        </div>
+        <button > <a></a>show more</button>
+
+        
+          
+
+    </body>
+</html>

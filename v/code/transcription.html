@@ -4,117 +4,124 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="transcription.css" />
         <title>Transcriptioin</title>
+        
+         <script type="module">
+            //
+            //Import the controller
+            import { balansys } from './balansys.js';
+            //
+            //Create an instance of the balansys class
+            const page = new balansys();
+            //
+            //Wait for the document to load then show the relevant panels
+            window.onload = async () => {
+                //
+                //page preparations
+                await page.show_panels();
+                //
+                //
+            };
+            //
+            //Make the instance of the balansys class globaly available
+            window.page = page;
+        </script>
     </head>
     <body>
         <div class="menu">
             <div class="logo">
-                <h1><em>Balansys</em></h1>
+                <h1><em>Balan&#36;y&#36;</em></h1>
+              
 
             </div>
             <div class="name">
+                
                 <h2>Balansys Transcription interface</h2>
+                Log in:<input type="text" placeholder="user">
+                <input type="date" id="todaydate">
             </div>
         </div>
         <div class="view">
-            <div class="select">
-                <fieldset>
+             <div class="select">
+                <!-- Select the source of image to be shown/transcribed -->
+                <fieldset data-field="source">
                     <legend>Select_file</legend>
-                    <input type="radio" />from_folder
-                    <br />
-                    <button>choose_file</button>
-                    <br />
-                    <input type="radio" />from_database
-                    <br />
-                    <button>Select</button>
-                </fieldset>
-                <fieldset>
-                    <legend>zoom</legend>
-                    <button>zoom+</button>
-                    <button>zoom-</button>
+
+                    <!-- local -->
+                    <fieldset class="source">
+                        <legend><input type="radio" name="source" />from_folder</legend>
+                        <button>choose_file</button>
+                    </fieldset>
+
+                    <!-- from database -->
+                    <fieldset class="source">
+                        <legend><input type="radio" name="source" />from_database</legend>
+
+                        <!-- A selector to select an image from the db -->
+                        <select id="db_img">
+                            <option label="click" value=""></option>
+                        </select>
+                    </fieldset>
                 </fieldset>
             </div>
             <!-- rename the class to image from content-avoid confusion from content id and content class-->
             <div class="image">
                 <!-- add the pic class -->
-                <img class="pic" src="bmj.jpg"  alt="bmj" />
-                <button>ZOOM+</button>
-                <button>ZOOM-</button>
+                <img src="#" id="receipt" class="pic" alt="bmj" />
             </div>
         </div>
         <div id="content">
-            <table id="table_data">
-                <tbody id="table_body">
-                    <tr bgcolor="grey">
-                        <th>Date</th>
-                        <th>Invoice_No</th>
-                        <th>Source</th>
-                        <th>Item</th>
-                        <th>Unit</th>
-                        <th>Quantity</th>
-                        <th>Amount</th>
-                    </tr>
-                    <tr bgcolor="lightgrey">
-                        <td>19/10/2023</td>
-                        <td>1948414</td>
-                        <td>Destiny_Best_supermarket</td>
-                        <td>Destiny_White_Bread</td>
-                        <td>800g</td>
-                        <td>1</td>
-                        <td>110</td>
-                    </tr>
-                    <tr bgcolor="lightgrey">
-                        <td>19/10/2023</td>
-                        <td>1948414</td>
-                        <td>Destiny_Best_supermarket</td>
-                        <td>Bella_Jumbo_Roll</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>125</td>
-                    </tr>
-                    <tr bgcolor="lightgrey">
-                        <td>19/10/2023</td>
-                        <td>1948414</td>
-                        <td>Destiny_Best_supermarket</td>
-                        <td>Destiny_Brown_Bread</td>
-                        <td>800g</td>
-                        <td>1</td>
-                        <td>110</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr id="transcription_data">
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                        <td><input type="text" class="input_data" /></td>
-                    </tr>
-                </tfoot>
-            </table>
-            <form>
-                <table>
-                    <tr>
-                        <td>
-                            <datalist>   
-                                <option value="glue">
-                                <option value="sugar">
-                                <option value="book">
-                                <option value="cake">
-                                <option value="pen">
-                                <option value="salt">
-                                <option value="cup">
-                                <option value="pencil">
-                                <option value="soap">
-                            </datalist>
-                        </td>
+            <fieldset>
+                <legend>invoice</legend>
+                Date:<input type="date"><br>
+                Invoice no:<input type="text"><br>
+                Supplier:<input type="text"><br>
+                Consumer:<input type="text"><br>
+                
+                <table id="table_data">
+                    <tbody id="table_body">
+                        <tr bgcolor="grey">
 
-                    </tr>
+                            <th>Item</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Destiny_White_Bread</td>
+                            <td>800g</td>
+                            <td>1</td>
+                            <td>110</td>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Bella_Jumbo_Roll</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>125</td>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Destiny_Brown_Bread</td>
+                            <td>800g</td>
+                            <td>1</td>
+                            <td>110</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr id="transcription_data">
+
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                        </tr>
+                    </tfoot>
                 </table>
-            </form>
-            <button onclick="get_data()">Add_Row</button>
+                   <button onclick="get_data()">Add_Row</button>
             <button>Save</button>
+            </fieldset>
+            
         </div>
         <footer class="foot">
 
@@ -123,9 +130,24 @@
                 <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/kibe.html"> James Kibe</a>
                 <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/munya.html"> George Munya</a>
             </p>
-            
-      </footer>
+
+        </footer>
         <script>
+               window.onload=()=>{
+                let inputDate= document.getElementById("todaydate"); 
+                //
+                // Create a new Date object with the current date.
+                var currentDate = new Date();
+                //
+                // Format the date as "yyyy-MM-dd"
+                let formattedDate =
+                  currentDate.getFullYear() +
+                  '-' +
+                  ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + currentDate.getDate()).slice(-2);
+              inputDate.value = formattedDate;
+            };
             // ------------------------------------------------------------------------
             //                      Adding new row and saving data
             // ------------------------------------------------------------------------
@@ -146,7 +168,7 @@
                 }
                 //
                 //clear existing data
-                 data.length=0;
+                data.length = 0;
                 //
                 // Store the data in the 'data' array
                 data.push(row_data);

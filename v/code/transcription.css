@@ -25,13 +25,19 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: #1abc9c;
-    color: blue;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: green;
+}
+.menu {
+    grid-area: menu;
+    margin-left: 0;
+    align-items: center;
+
 }
 .logo{
     display: flex;
-/*    align-items: center;
-    justify-content: space-around;*/
+    /*    align-items: center;
+        justify-content: space-around;*/
 }
 .name{
     display:flex;
@@ -48,6 +54,7 @@ body {
     grid-area: content;
     color: black;
 }
+
 .select{
     position: fixed;
     width:48%;
@@ -69,18 +76,14 @@ img {
 
 }
 
-.pic:hover{
-    width:120%;
-}
 .foot {
     grid-area: foot;
     background: aqua;
 }
 h1{
-   font-size: 40px;
+    font-size: 40px;
 }
-.select{
-    display: inline-block;
-/*    justify-content: space-between;*/
-    
+
+#selector{
+    position: fixed;
 }
