@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Transcriptioin</title>
+        <link rel="stylesheet" href="receipt.css" />
+    </head>
+    <body>
+        <form action="save.php" method="post">
+            <div>
+                <div>
+                    <p>receipt</p>
+                    <label> Date:<input type="date" name="date"></label>
+                    <label> Invoice:<input type="text" name="invoice" value=4567 ></label>
+                </div>
+                <div>
+                    <label> Supplier:<input type="text" name="supplier" value="beehope"></label>
+                    <label> Consumer:<input type="text" name="consumer" value="mutall"> </label>
+                    <label> Description:<input type="text" name="description" value="kitchen purchase"></label>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>no</th>
+                        <th>code</th>
+                        <th>name</th>
+                        <th>unit</th>
+                        <th>value</th>
+                        <th>price</th>
+                        <th>amount</th>
+                    </tr>
+                </thead>
+
+                <tr>
+                    <td>0</td>
+                    <td><input type="number" name="code[]" value=123 /></td>
+                    <td><input type="text" name="name[]" value="rice"/></td>
+                    <td><input type="text" name="unit[]" value="kg"/></td>
+                    <td><input type="number" name="value[]" value=25 /></td>
+                    <td><input type="number" name="price[]" value=500 ></td>
+                    <td><input type="number" name="amount[]" value=12500 /></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><input type="number" name="code[]" value=0945788 /></td>
+                    <td><input type="text" name="name[]" value="baking powder"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=40 /></td>
+                    <td><input type="number" name="price[]" value=70 /></td>
+                    <td><input type="number" name="amount[]" value=2800 /></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><input type="number" name="code[]" value=8958034 /></td>
+                    <td><input type="text" name="name[]" value="sugar"/></td>
+                    <td><input type="text" name="unit[]" value="bags"/></td>
+                    <td><input type="number" name="value[]" value=80 /></td>
+                    <td><input type="number" name="price[]" value=1300 /></td>
+                    <td><input type="number" name="amount[]" value=104000 /></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><input type="number" name="code[]" value=78309 /></td>
+                    <td><input type="text" name="name[]" value="salt"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=15 /></td>
+                    <td><input type="number" name="price[]" value=10 /></td>
+                    <td><input type="number" name="amount[]" value=150 /></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><input type="number" name="code[]" value=4909090 /></td>
+                    <td><input type="text" name="name[]" value="soap"/></td>
+                    <td><input type="text" name="unit[]" value="pcs"/></td>
+                    <td><input type="number" name="value[]" value=100 /></td>
+                    <td><input type="number" name="price[]" value=55 /></td>
+                    <td><input type="number" name="amount[]" value=5500 /></td>
+                </tr>
+               <tr>
+                    <td>5</td>
+                    <td><input type="number" name="code[]" value=56754365 /></td>
+                    <td><input type="text" name="name[]" value="washing powder"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=80 /></td>
+                    <td><input type="number" name="price[]" value=20 /></td>
+                    <td><input type="number" name="amount[]" value=1600 /></td>
+                </tr>
+
+                <tr>
+                    <td>6</td>
+                    <td><input type="number" name="code[]" value=546356 /></td>
+                    <td><input type="text" name="name[]" value="tissue"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=65 /></td>
+                    <td><input type="number" name="price[]" value=19 /></td>
+                    <td><input type="number" name="amount[]" value=1235 /></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><input type="number" name="code[]" value=890275 /></td>
+                    <td><input type="text" name="name[]" value="mandazi"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=10 /></td>
+                    <td><input type="number" name="price[]" value=230 /></td>
+                    <td><input type="number" name="amount[]" value=2300 /></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><input type="number" name="code[]" value=234354 /></td>
+                    <td><input type="text" name="name[]" value="toothpaste"/></td>
+                    <td><input type="text" name="unit[]" value="pcs"/></td>
+                    <td><input type="number" name="value[]" value=17 /></td>
+                    <td><input type="number" name="price[]" value=21 /></td>
+                    <td><input type="number" name="amount[]" value=357 /></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td><input type="number" name="code[]" value=985740 /></td>
+                    <td><input type="text" name="name[]" value="juice"/></td>
+                    <td><input type="text" name="unit[]" value="pct"/></td>
+                    <td><input type="number" name="value[]" value=45 /></td>
+                    <td><input type="number" name="price[]" value=70 /></td>
+                    <td><input type="number" name="amount[]" value=3150 /></td>
+                </tr>
+
+
+            </table>
+            <input type="submit" value="submit"/>
+        </form>
+
+    </body>
+
+</html>

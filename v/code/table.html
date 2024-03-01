@@ -1,58 +1,74 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Add some basic styling to the table */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
 
-<html>
-    <head>
-        <title>Tabulation</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            html{
-                width: 100%;
-                height: 100%;
-            }
-            body{
-                width: 50%;
-                height: 50%;
-            }
-            table{
-                
-                width: 100%;
-                height: 100%;
-            }
-           table, th, td {
-                border: 5px solid black;
-                border-collapse: collapse;
-            }
-            
-        </style>
-    </head>
-    <body>
-        <table>
-            <thead><u>Tabulation</u></thead>
-            <tr>
-                <td></td>
-                <td>Crown</td>
-                <td></td>
-            </tr>
+    th, td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
 
-            <tr>
-                <td>Crest</td>
-                <td>Crumb</td>
-                <td>Summary</td>
-            </tr>
+    th {
+      background-color: #f2f2f2;
+    }
 
-            <tr>
-                <td></td>
-                <td>Body</td>
-                <td></td>
-            </tr>
+    /* Hide the details row by default */
+    .details {
+      display: none;
+    }
+  </style>
+  <title>hiding rows</title>
+</head>
+<body>
 
-            <tr>
-                <td></td>
-                <td>Footer</td>
-                <td></td>
-            </tr>
+<table id="myTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Country</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="parent" data-id="1">
+      <td>John Doe</td>
+      <td>30</td>
+      <td>USA</td>
+    </tr>
+    <tr class="details" data-parent-id="1">
+      <td colspan="3">
+        <p><strong>Additional Information:</strong></p>
+        <p>Email: john.doe@example.com</p>
+        <p>Phone: 123-456-7890</p>
+      </td>
+    </tr>
+    <!-- Add more rows as needed -->
+  </tbody>
+</table>
 
-        </table>
-    </body>
+<script>
+  // Add click event listener to each parent row
+  const parentRows = document.querySelectorAll('.parent');
+  parentRows.forEach(row => {
+    row.addEventListener('click', () => toggleDetails(row));
+  });
+
+  // Function to toggle the details row
+  function toggleDetails(parentRow) {
+    const detailsRow = parentRow.nextElementSibling;
+
+    // Toggle the 'details' class to show/hide the details row
+    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+  }
+</script>
+
+</body>
 </html>

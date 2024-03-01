@@ -1,0 +1,46 @@
+table {
+    border-collapse: collapse;
+    border-color: black;
+    margin-top: 20px; /* Add some space between the table and the form */
+}
+.unit {
+    width: 50px;
+}
+.value {
+    width: 70px;
+}
+.price {
+    width: 70px;
+}
+.amount {
+    width: 70px;
+}
+.invoice {
+    width: 80px;
+}
+.supplier {
+    width: 90px;
+}
+.consumer {
+    width: 50px;
+}
+.code {
+    width: 100px;
+}
+.description {
+    width: 120px;
+}
+.name {
+    width: 110px;
+}
+.details {
+    display: flex;
+    justify-content: space-between; /* Adjust spacing between the two divs */
+    margin-bottom: 20px; /* Add space between the details div and the table */
+}
+form {
+    margin: 20px; /* Add some margin to the form for overall spacing */
+}
+label {
+    margin-right: 10px; /* Adjust the margin between labels */
+}
