@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Display Blob Image</title>
+</head>
+<body>
+
+<?php
+// Connect to your MySQL database
+$servername = "127.0.0.1";
+$username = "root";
+$password = "password";
+$dbname = "balansys";
+
+$conn = new mysqli($127.0.0.1, $root, $password, $balansys);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Query to fetch blob data
+$sql = "SELECT image_blob FROM image WHERE image = 1"; // Change the query as per your table structure and conditions
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Fetch the blob data
+    $row = $result->fetch_assoc();
+    
+    // Output the image
+    echo '<img src="data:image/jpeg;base64,'.base64_encode($row['image_blob']).'" alt="Blob Image">';
+} else {
+    echo "No image found";
+}
+
+$conn->close();
+?>
+
+</body>
+</html>
