@@ -1,0 +1,43 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 15% 80% 10%;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "menu menu"
+        "view content"
+        "foot foot";
+}
+
+.menu {
+    grid-area: menu;
+    background: #1abc9c;
+    color: blue;
+}
+
+.view {
+    grid-area: view;
+    background: beige;
+    overflow-y: scroll;
+}
+
+#content {
+    grid-area: content;
+    color: black;
+    margin-right: 0;
+}
+
+.foot {
+    grid-area: foot;
+    background: aqua;
+}
