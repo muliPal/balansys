@@ -6,41 +6,26 @@ include '../../../schema/v/code/questionnaire.php';
 //
 //Load the mappings to a database
 $q = new \mutall\questionnaire("balansys");
-//
-$changes = [
-    //
-    //payment information
-    ['03/02/2024  07:42:40', "payment", "date"],
-    
-    ['SB31WH0TBH', "payment", "ref"],
-    
-    ['Customer Transfer to -07******298 BENARD PALSTAU',
-        "payment", "details"],
-    
-    ['-12000', "payment", "amount"],
-    
-];
-//
-//Local name of our table
-$tname = 'payment';
 
-//
-//The column names of the above table
-$cnames = ['ref', 'date', 'details', 'amount'];
-
-//
-$payment = new matrix(
-    $tname,
-    $cnames,
-    $array
+//This is the mpesa table
+$table = new csv(
+        'mpesa',
+        'D:/mutall_projects/balansys/data/mpesastatement2.csv'
 );
 
-//Define thelooup function
-$fn = '\mutall\capture\lookup';
-
+//
+//The mapping is defined by the laout variable, using the following pattern
+//[exp, ename, cname]
+$layout = [
+    $table,
+    [new lookup('mpesa', 'Receipt No.'), 'payment', 'ref'],
+    [new lookup('mpesa', 'Completion Time'), 'payment', 'date'],
+    [new lookup('mpesa', 'Details'), 'payment', 'details'],
+    [new lookup('mpesa', 'Withdrawn'), 'payment', 'amount']
+];
 //
 //Load the data using the most common method
-$result = $q -> load_common($layout, '/balansys/v/code/log.xml', '/balansys/v/code/error.html');
+$result = $q -> load_common($layout);
 //
 //print the q
 echo $result;

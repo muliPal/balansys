@@ -61,7 +61,6 @@ $layout = [
     //Item  
     [[$fn, $tname, 'units'], "item", "unit"],
     [[$fn, $tname, 'description'], "item", "name"],
-    [[$fn, $tname, 'currency'], "item", "currency"],
     [[$fn, $tname, 'price'], "item", "price"],
     //
     //Qty
@@ -69,7 +68,7 @@ $layout = [
 ];
 //
 //Load the data using the most common method
-$result = $q -> load_common($layout, '/balansys/v/code/log.xml', '/balansys/v/code/error.html');
+$result = $q -> load_common($layout, '/balansys/v/code/log.xml');
 //
 //print the q
 echo $result;

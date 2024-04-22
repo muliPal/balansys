@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Speech to Text</title>
+    </head>
+    <body>
+        <button id="start-btn">Start Recording</button>
+        <div id="output"></div>
+
+        <script>
+            //
+            //Set the global variables
+            const output = document.getElementById('output');
+            const startBtn = document.getElementById('start-btn');
+
+            // Check if SpeechRecognition is supported by the browser
+            if ('webkitSpeechRecognition' in window) {
+                //
+                //Create a speech rcecognizer
+                const recognition = new window.webkitSpeechRecognition();
+                //
+                //Set some recognition properties
+                //
+                //??
+                recognition.continuous = true;
+                //
+                //??
+                recognition.interimResults = true;
+                //
+                //Use the UK english
+                recognition.lang = 'en-US'; 
+                //
+                //Set the start of the speech recognition
+                recognition.onstart = function() {
+                    output.textContent = 'Listening...';
+                };
+                //
+                //Set the error hnadler
+                recognition.onerror = function(event) {
+                    output.textContent = 'Error occurred: ' + event.error;
+                };
+                //
+                //Set the result handler
+                recognition.onresult = function(event) {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+
+                    output.innerHTML = '<p><strong>Final:</strong> ' + finalTranscript + '</p>';
+                };
+                //
+                //Start button handler
+                startBtn.addEventListener('click', function() {
+                if (recognition.start) {
+                    recognition.start();
+                    startBtn.textContent = 'Stop Recording';
+                } else {
+                    output.textContent = 'Speech recognition not supported by this browser.';
+                }
+            });
+            } else output.textContent = 'Speech recognition not supported by this browser.';
+        
+        </script>
+    </body>
+</html>

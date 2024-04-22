@@ -14,7 +14,7 @@ $username = "root";
 $password = "password";
 $dbname = "balansys";
 
-$conn = new mysqli($127.0.0.1, $root, $password, $balansys);
+$conn = new mysqli('localhost', $root, $password, $balansys);
 
 // Check connection
 if ($conn->connect_error) {
