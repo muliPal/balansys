@@ -1,89 +1,122 @@
+/* Set HTML element to take full viewport height and width */
 html {
-    width: 100%;
     height: 100%;
+    width: 100%;
 }
 
+/* Reset margin for all elements */
 * {
     margin: 0;
-    overflow: hidden;
+    box-sizing: border-box;
 }
 
+/* Body styling with grid layout */
 body {
+    width: 100%;
     height: 100%;
+    margin: 0;
     display: grid;
-    grid-template-rows: 15% 80% 5%;
-    grid-template-columns: 50% 50%;
+    /* Define grid template areas for layout */
     grid-template-areas:
-        "menu menu"
-        "view content"
-        "foot foot";
+        'consumer receipt'
+        'file receipt'
+        'nav receipt'
+        'image supplier'
+        'image purchase';
+    /* Define row sizes for the grid */
+    grid-template-rows: 17.5% 20% 2.5% 20% 40%;
+    /* Define column sizes for the grid (equal width) */
+    grid-template-columns: 50% 50%;
 }
 
-.menu {
-    grid-area: menu;
-    margin-left: 0;
+/* General styling for all content sections */
+#file, #image, #consumer, #receipt, #supplier, #purchase {
+    border: solid 1px black; /* Add border */
+    overflow: scroll; /* Enable scrolling if content overflows */
+}
+
+/* Position file section in grid */
+#file {
+    grid-area: file;
+}
+
+/* Position image section in grid */
+#image {
+    grid-area: image;
+}
+
+/* Position consumer section in grid */
+#consumer {
+    grid-area: consumer;
+}
+
+/* Position receipt section in grid */
+#receipt {
+    grid-area: receipt;
+}
+
+/* Navigation bar styling */
+#nav {
+    grid-area: nav;
+    display: flex; /* Use flexbox for navigation */
+    justify-content: space-around; /* Space navigation items evenly */
+}
+
+/* Position purchase section in grid */
+#purchase {
+    grid-area: purchase;
+}
+
+/* Position supplier section in grid */
+#supplier {
+    grid-area: supplier;
+}
+
+/* Image styling to be responsive within container */
+img {
+    width: 100%; /* Full width of container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Anchor (link) styling */
+a {
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Allow padding and proper sizing */
+    padding: 8px 16px; /* Add padding around text */
+}
+
+/* Hover effect for links */
+a:hover {
+    background-color: #ddd; /* Light gray background on hover */
+    color: black; /* Black text on hover */
+}
+
+/* Previous button styling */
+.previous {
+    background-color: #f1f1f1; /* Light gray background */
+    color: black; /* Black text */
+    border-radius: 30%; /* Rounded corners */
+}
+
+/* Next button styling */
+.next {
+    background-color: #04AA6D; /* Green background */
+    color: white;
+    border-radius: 30%; /* Rounded corners */
+}
+/* Make the product name column twice the size of the other columns */
+#purchase td:nth-child(4){
+    width: 150px;
+}
+ /* Make the other columns half the size of product.name*/
+#purchase td:nth-child(2),
+#purchase td:nth-child(3),
+#purchase td:nth-child(5),
+#purchase td:nth-child(6),
+#purchase td:nth-child(7){
+    width:60px;
+}
+#panner{
     display: flex;
     justify-content: space-around;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.4);
-    color: green;
-}
-.menu {
-    grid-area: menu;
-    margin-left: 0;
-    align-items: center;
-
-}
-.logo{
-    display: flex;
-    /*    align-items: center;
-        justify-content: space-around;*/
-}
-.name{
-    display:flex;
-}
-.view {
-    grid-area: view;
-    background: beige;
-    overflow-y: scroll;
-}
-
-#content {
-    overflow-y: scroll;
-    overflow-x: scroll;
-    grid-area: content;
-    color: black;
-}
-
-.select{
-    position: fixed;
-    width:48%;
-    color: black;
-    font-weight: bolder;
-}
-.image {
-    margin-top: 20%;
-    border: 2px solid black;
-}
-
-.pic{
-    width:400px;
-    /*    height:300px;*/
-}
-img {
-    /*   margin-left: -50%;
-      width: 200%;*/
-
-}
-
-.foot {
-    grid-area: foot;
-    background: aqua;
-}
-h1{
-    font-size: 40px;
-}
-
-#selector{
-    position: fixed;
 }

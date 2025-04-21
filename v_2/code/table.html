@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Add some basic styling to the table */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #dddddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* Hide the details row by default */
+    .details {
+      display: none;
+    }
+  </style>
+  <title>hiding rows</title>
+</head>
+<body>
+
+<table id="myTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Country</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="parent" data-id="1">
+      <td>John Doe</td>
+      <td>30</td>
+      <td>USA</td>
+    </tr>
+    <tr class="details" data-parent-id="1">
+      <td colspan="3">
+        <p><strong>Additional Information:</strong></p>
+        <p>Email: john.doe@example.com</p>
+        <p>Phone: 123-456-7890</p>
+      </td>
+    </tr>
+    <!-- Add more rows as needed -->
+  </tbody>
+</table>
+
+<script>
+  // Add click event listener to each parent row
+  const parentRows = document.querySelectorAll('.parent');
+  parentRows.forEach(row => {
+    row.addEventListener('click', () => toggleDetails(row));
+  });
+
+  // Function to toggle the details row
+  function toggleDetails(parentRow) {
+    const detailsRow = parentRow.nextElementSibling;
+
+    // Toggle the 'details' class to show/hide the details row
+    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+  }
+</script>
+
+</body>
+</html>

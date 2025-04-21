@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="transcription.css" />
+        <title>Transcriptioin</title>
+        
+         <script type="module">
+            //
+            //Import the controller
+            import { balansys } from './balansys.js';
+            //
+            //Create an instance of the balansys class
+            const page = new balansys();
+            //
+            //Wait for the document to load then show the relevant panels
+            window.onload = async () => {
+                //
+                //page preparations
+                await page.show_panels();
+                //
+                //
+            };
+            //
+            //Make the instance of the balansys class globaly available
+            window.page = page;
+        </script>
+    </head>
+    <body>
+        <div class="menu">
+            <div class="logo">
+                <h1><em>Balan&#36;y&#36;</em></h1>
+              
+
+            </div>
+            <div class="name">
+                
+                <h2>Balansys Transcription interface</h2>
+                Log in:<input type="text" placeholder="user">
+                <input type="date" id="todaydate">
+            </div>
+        </div>
+        <div class="view">
+             <div class="select">
+                <!-- Select the source of image to be shown/transcribed -->
+                <fieldset data-field="source">
+                    <legend>Select_file</legend>
+
+                    <!-- local -->
+                    <fieldset class="source">
+                        <legend><input type="radio" name="source" />from_folder</legend>
+                        <button>choose_file</button>
+                    </fieldset>
+
+                    <!-- from database -->
+                    <fieldset class="source">
+                        <legend><input type="radio" name="source" />from_database</legend>
+
+                        <!-- A selector to select an image from the db -->
+                        <select id="db_img">
+                            <option label="click" value=""></option>
+                        </select>
+                    </fieldset>
+                </fieldset>
+            </div>
+            <!-- rename the class to image from content-avoid confusion from content id and content class-->
+            <div class="image">
+                <!-- add the pic class -->
+                <img src="#" id="receipt" class="pic" alt="bmj" />
+            </div>
+        </div>
+        <div id="content">
+            <fieldset>
+                <legend>invoice</legend>
+                Date:<input type="date"><br>
+                Invoice no:<input type="text"><br>
+                Supplier:<input type="text"><br>
+                Consumer:<input type="text"><br>
+                
+                <table id="table_data">
+                    <tbody id="table_body">
+                        <tr bgcolor="grey">
+
+                            <th>Item</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Destiny_White_Bread</td>
+                            <td>800g</td>
+                            <td>1</td>
+                            <td>110</td>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Bella_Jumbo_Roll</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>125</td>
+                        </tr>
+                        <tr bgcolor="lightgrey">
+
+                            <td>Destiny_Brown_Bread</td>
+                            <td>800g</td>
+                            <td>1</td>
+                            <td>110</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr id="transcription_data">
+
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                            <td><input type="text" class="input_data" /></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                   <button onclick="get_data()">Add_Row</button>
+            <button>Save</button>
+            </fieldset>
+            
+        </div>
+        <footer class="foot">
+
+            <p>Developers:<a href="https://dev.mutall.co.ke/tracker/portfolio/2023/muli.html">Benard muli</a>
+                <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/mogaka.html">James Mogaka</a>
+                <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/kibe.html"> James Kibe</a>
+                <a href="https://dev.mutall.co.ke/tracker/portfolio/2023/munya.html"> George Munya</a>
+            </p>
+
+        </footer>
+        <script>
+               window.onload=()=>{
+                let inputDate= document.getElementById("todaydate"); 
+                //
+                // Create a new Date object with the current date.
+                var currentDate = new Date();
+                //
+                // Format the date as "yyyy-MM-dd"
+                let formattedDate =
+                  currentDate.getFullYear() +
+                  '-' +
+                  ('0' + (currentDate.getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + currentDate.getDate()).slice(-2);
+              inputDate.value = formattedDate;
+            };
+            // ------------------------------------------------------------------------
+            //                      Adding new row and saving data
+            // ------------------------------------------------------------------------
+            const balansys_table_body = document.getElementById("table_body");
+            //
+            // Create an empty array to store the data to.
+            const data = [];
+
+            //
+            // Retrieve the data and store in the data array.
+            function get_data() {
+                const input_fields = document.getElementsByClassName("input_data");
+                const row_data = [];
+                //
+                // Get the data from the input boxes.
+                for (let i = 0; i < input_fields.length; i++) {
+                    row_data.push(input_fields[i].value);
+                }
+                //
+                //clear existing data
+                data.length = 0;
+                //
+                // Store the data in the 'data' array
+                data.push(row_data);
+                //
+                // Checking if i got the data from the input fields.
+                console.log(row_data);
+                //
+                // This will display the data from the input box to the table
+                update_table();
+            }
+
+            //
+            // This will display the data from the input box to the table
+            // The data got from get_data is in form of an arrary and its the row data
+            // so i have to get the individual cell data and distrubute them to each td.
+            function update_table() {
+                data.forEach((row_data) => {
+                    const new_row = document.createElement("tr");
+                    //
+                    // Create a row and append the data to each td
+                    row_data.forEach((value) => {
+                        const new_cell = document.createElement("td");
+                        new_cell.textContent = value;
+                        new_row.appendChild(new_cell);
+                    });
+                    //
+                    // Display the new row with data to the table body
+                    balansys_table_body.appendChild(new_row);
+                });
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,89 @@
+html {
+    width: 100%;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 15% 80% 5%;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "menu menu"
+        "view content"
+        "foot foot";
+}
+
+.menu {
+    grid-area: menu;
+    margin-left: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: green;
+}
+.menu {
+    grid-area: menu;
+    margin-left: 0;
+    align-items: center;
+
+}
+.logo{
+    display: flex;
+    /*    align-items: center;
+        justify-content: space-around;*/
+}
+.name{
+    display:flex;
+}
+.view {
+    grid-area: view;
+    background: beige;
+    overflow-y: scroll;
+}
+
+#content {
+    overflow-y: scroll;
+    overflow-x: scroll;
+    grid-area: content;
+    color: black;
+}
+
+.select{
+    position: fixed;
+    width:48%;
+    color: black;
+    font-weight: bolder;
+}
+.image {
+    margin-top: 20%;
+    border: 2px solid black;
+}
+
+.pic{
+    width:400px;
+    /*    height:300px;*/
+}
+img {
+    /*   margin-left: -50%;
+      width: 200%;*/
+
+}
+
+.foot {
+    grid-area: foot;
+    background: aqua;
+}
+h1{
+    font-size: 40px;
+}
+
+#selector{
+    position: fixed;
+}

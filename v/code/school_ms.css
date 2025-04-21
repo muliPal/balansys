@@ -1,0 +1,118 @@
+body,
+html {
+	height: 100%;
+	width: 100%;
+}
+
+/* 
+Sizing the elements in the container */
+body {
+	/* 
+  The entire school page styling  */
+	background-color: rgb(182, 246, 229);
+
+	display: grid;
+	/*
+  Sections on the web page  */
+	grid-template-areas:
+		"school class student student"
+		"stream year student student";
+	/*
+  The spacing between the grid areas  */
+	gap: 15px;
+	/*
+  No scroll bars for the main container*/
+	overflow: hidden;
+}
+
+/*
+Control overflow for all panels*/
+#school_panel,
+#stream,
+#class_,
+#year,
+#student {
+	overflow: auto;
+}
+
+/* 
+Styling for the school panel in the school page */
+#school_panel {
+	grid-area: school;
+	background-color: rgb(242, 244, 248);
+}
+/*
+styling the stream panel in the school page */
+#stream {
+	grid-area: stream;
+	background-color: rgba(248, 253, 240, 0.172);
+}
+/* 
+Styling the class panel in the school page*/
+#class_ {
+	grid-area: class;
+	background-color: rgb(230, 238, 236);
+}
+/*
+  Styling the year panel inthe school page  */
+#year {
+	grid-area: year;
+	background-color: rgba(221, 236, 229, 0.952);
+}
+/*
+  Styling student panel in the school page  */
+#student {
+	grid-area: student;
+	background-color: rgb(237, 251, 253);
+}
+/*
+Freezing headers of the entire school page 'panels' */
+table tbody tr:first-child {
+	position: sticky;
+	/* 
+  Adjust this value based on where you want it to stick */
+	top: 0;
+	/* 
+  Optional: ensures it stays above other content  minimizes distraction */
+	z-index: 1;
+}
+/*
+Sticky positioning for the first column for the year panel */
+#year table tbody tr td:nth-child(2) {
+	position: sticky;
+	left: 0;
+	/* Ensure it stays above other content */
+	z-index: 1;
+}
+
+/* Ensure that the table obeys defined widths */
+table {
+	table-layout: fixed;
+}
+
+/* Use a defined width for all the cells in the table */
+td {
+	width: 30px;
+	overflow: hidden;
+}
+
+/* For the first second and last columns make them small since the content does not require alot of 
+space
+*/
+td:first-child,
+td:nth-child(2),
+td:last-child {
+	width: 10px;
+}
+/* Reduce the size of the school id, column name stream id and year value */
+#student td:nth-child(3),
+#student td:nth-child(4),
+#student td:nth-child(5),
+#student td:nth-child(6) {
+	width: 10px;
+}
+
+/* Increase the size of the last column */
+#student td:nth-child(7) {
+	width: 80px;
+}
