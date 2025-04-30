@@ -4,7 +4,7 @@ import {
 } from "../../../outlook/v/zone/zone.js";
 import { view, label, mutall_error, basic_value, mymap} from "../../../schema/v/code/schema.js";
 import {resizer} from "../../../resizer/v/code/resize.js";
-import "sql.js";
+import {select} from "./sql.js";
 // import {authoriser} from "../../../authoriser/v/code/authoriser.js"
 //
 //
@@ -16,7 +16,8 @@ abstract class mypanel extends panel.panel{
     //
     //The constructor of this panel exposes assumes teh driver is of the sql type
     // and therfore exposes the the sql statement (rather than the driver)
-    constructor(
+
+     constructor(
         public sql:string,
          row_index:string, 
          anchor: HTMLElement | string, 
@@ -727,7 +728,7 @@ export class supplier extends mypanel{
         //is checked and used for writing the record
         [
             this.get_leftie(), 
-            new panel.reviewer(this, 0, false, 'open',{onchange:(cell:cell)=>this.onclick_from_reviewer(cell)}), 
+            new panel.reviewer(this, 0, false, 'open'), 
             this, 
             //
             //Do not refresh the panel after writing
@@ -925,12 +926,55 @@ class receipt extends peer {
         super(receipt.sql, 'image.image', '#receipt', options, parent);
     }
     //
+    // Here, I intend to add an onblur event listener that will:
+    // 1. Retrieve the value of the first cell in the row (supplier.name).
+    // 2. Use this value as a condition in an SQL query to fetch additional details 
+    //    about the supplier from the database.
+    // 3. If data for the supplier is found, prefill the rest of the row with the retrieved data.
+    // 4. If no data is found, leave the row unchanged.
     //Here i try to call the onblur event listener and aler that i have lost focus there.
+    // async onblur(cell: cell, evt?: Event): Promise<void> {
+    //     await super.onblur(cell, evt);
+        
+    //     //
+    //     //1.Check whether this is the cell of interest, if it is not, you discontinue the process.
+    //     //
+    //     //2.The cell is of interest, use it to prefill the rest of the records.
+    //     //
+    //     //3.Formulate an sql for retrieving the desired data.
+    //     //
+    //     //4.Execute the sql, if the result is empty, we dicontinue ...
+    //     //
+    //     //5. ..otherwise we prefill the rest of the records with the appropriate data.       
+    // }
     async onblur(cell: cell, evt?: Event): Promise<void> {
         await super.onblur(cell, evt);
-       console.log('the onblur in full effect');
-       
+    
+        // Step 1: Is this the cell of interest?
+        if (cell.column.name !== "name" || cell.row.entity !== "supplier") return;
+    
+        // Step 2: Get the name
+        const supplierName = cell?.value?.toString().trim();
+        if (!supplierName) return;
+    
+        // Step 3: Create SQL query
+        const sql = `SELECT * FROM supplier WHERE name = '${supplierName}'`;
+    
+        // Step 4: Execute SQL
+        const result = await this.execute_sql(sql);
+        if (!result || result.length === 0) return;
+    
+        // Step 5: Fill other cells
+        const supplierData = result[0];
+        for (const [key, value] of Object.entries(supplierData)) {
+            if (key === "name") continue;
+            const targetCell = cell.row.cells.find(c => c.column.name === key);
+            if (targetCell) {
+                targetCell.value = value;
+            }
+        }
     }
+    
    
 }
 //The panel that shows the actual scanned images of receipts 

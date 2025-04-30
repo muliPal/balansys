@@ -672,7 +672,7 @@ export class supplier extends mypanel {
         //is checked and used for writing the record
         [
             this.get_leftie(),
-            new panel.reviewer(this, 0, false, 'open', { onchange: (cell) => this.onclick_from_reviewer(cell) }),
+            new panel.reviewer(this, 0, false, 'open'),
             this,
             //
             //Do not refresh the panel after writing
@@ -864,10 +864,20 @@ class receipt extends peer {
         super(receipt.sql, 'image.image', '#receipt', options, parent);
     }
     //
+    //Write a paragraph describing the workload(Auto filling).
     //Here i try to call the onblur event listener and aler that i have lost focus there.
     async onblur(cell, evt) {
         await super.onblur(cell, evt);
-        console.log('the onblur in full effect');
+        //
+        //1.Check whether this is the cell of interest, if it is not, you discontinue the process.
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        //
+        //4.Execute the sql, if the result is empty, we dicontinue ...
+        //
+        //5. ..otherwise we prefill the rest of the records with the appropriate data.
     }
 }
 //The panel that shows the actual scanned images of receipts 
