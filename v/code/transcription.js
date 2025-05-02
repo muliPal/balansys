@@ -701,6 +701,76 @@ export class supplier extends mypanel {
         super(supplier.sql, row_index_cname, '#supplier', options, parent);
     }
     //
+    // Here, I override the default onblur event to implement custom behavior:
+    // 1. Retrieve the value of the first cell in the row (supplier.name).
+    // 2. Use this value as a condition in an SQL query to fetch additional details 
+    //    about the supplier from the database.
+    // 3. If data for the supplier is found, prefill the rest of the row with the retrieved data.
+    // 4. If no data is found, leave the row unchanged.
+    // This custom onblur ensures that once the user finishes editing the supplier name,
+    // the system intelligently populates the rest of the row to save time and reduce errors.
+    async onblur(cell, evt) {
+        await super.onblur(cell, evt);
+        //
+        // Step 1: Is this the cell of interest?if not, discontinue.
+        if (cell.index[1] !== 'supplier.name')
+            return;
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //2.1.Get the name of the supplier.
+        const supplier_name = cell.io?.value;
+        //
+        //If the supplier name is undefined, discontinue this process.
+        if (supplier_name === undefined)
+            return;
+        //
+        //If supplier name is null, you discontinue
+        if (supplier_name === null)
+            return;
+        //
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        const sql = `
+        SELECT 
+            business.title,
+            business.tel,
+            business.email,
+            business.address,
+            business.pin
+        FROM 
+            business
+            inner join supplier on supplier.business= business.business
+            
+        WHERE 
+           supplier.name = '${supplier_name}'
+        `;
+        //
+        //4.Execute the sql to get some result.
+        const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        console.log(results);
+        //
+        //Test whether the result is empty
+        if (results.length === 0)
+            return;
+        //5. ..otherwise we prefill the rest of the records with the appropriate data.  
+        // const supplierData = results[0];
+        //
+        const supplierData = results[0];
+        const rowIndex = cell.index[0]; // get row index from current cell
+        // Step 5: Use cells_indexed to set values in the same row
+        for (const [key, value] of Object.entries(supplierData)) {
+            // Skip name, already handled
+            if (key === "name")
+                continue;
+            // Get the target cell using the key as the column name
+            const targetCell = this.cells_indexed?.[rowIndex]?.[key];
+            if (targetCell) {
+                targetCell.value = value;
+            }
+        }
+    }
+    //
     //Show the first/only row for a consumer selection.
     async show_selection() {
         //
@@ -862,22 +932,6 @@ class receipt extends peer {
         };
         //    
         super(receipt.sql, 'image.image', '#receipt', options, parent);
-    }
-    //
-    //Write a paragraph describing the workload(Auto filling).
-    //Here i try to call the onblur event listener and aler that i have lost focus there.
-    async onblur(cell, evt) {
-        await super.onblur(cell, evt);
-        //
-        //1.Check whether this is the cell of interest, if it is not, you discontinue the process.
-        //
-        //2.The cell is of interest, use it to prefill the rest of the records.
-        //
-        //3.Formulate an sql for retrieving the desired data.
-        //
-        //4.Execute the sql, if the result is empty, we dicontinue ...
-        //
-        //5. ..otherwise we prefill the rest of the records with the appropriate data.
     }
 }
 //The panel that shows the actual scanned images of receipts 
