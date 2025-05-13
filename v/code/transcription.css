@@ -24,7 +24,7 @@ body {
         'image supplier'
         'image purchase';
     /* Define row sizes for the grid */
-    grid-template-rows: 17.5% 20% 2.5% 20% 40%;
+    grid-template-rows: 16% 20% 4% 20% 40%;
     /* Define column sizes for the grid (equal width) */
     grid-template-columns: 50% 50%;
 }
@@ -119,4 +119,7 @@ a:hover {
 #panner{
     display: flex;
     justify-content: space-around;
+}
+button{
+    height: 25px;
 }

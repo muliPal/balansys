@@ -138,7 +138,7 @@ export class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider 
                 #pagination in future
-                limit 20
+                 limit 20
             `;
         //
         //return the sql
@@ -206,7 +206,10 @@ export class transcription extends panel.group {
     // the show method
     async show() {
         await super.show();
-        this.resizer = new resizer(this.document.body, { min_panel_size: 40 });
+        this.resizer = new resizer(document.body, {
+            min_panel_size: 25,
+            threshold: 5,
+        });
     }
     //
     //Zoom in to the selected image group member
@@ -497,6 +500,10 @@ class purchase extends mypanel {
         `;
     //
     //The creator sub panel
+    //
+    //Set the options to cause the onblur event to be raised on the creator.
+    //let options:table_options ;
+    //creator = new panel.creator(this, 1, options );
     creator = new panel.creator(this, 1);
     //
     //The plan of a purchase allows us to create and review purchase.
@@ -548,25 +555,96 @@ class purchase extends mypanel {
         super(purchase.sql, 'purchase.purchase', '#purchase', options, parent);
     }
     //
-    //Here i was trying to get the value of the cell that i typed but i am only logging 
-    // a message instead of the value
-    // async onblur(cell: cell, evt?: Event): Promise<void> {
-    //     await super.onblur(cell, evt);
-    //     // Ensure the cell value is properly retrieved and trimmed
-    //     const value = cell.value?.toString().trim(); // Convert to string in case it's not
-    //     // Log the value of the cell, or indicate if it's empty
-    //     if (value) {
-    //         console.log("Cell value:", value);
-    //     } else {
-    //         console.log("Cell is empty or has no value.");
-    //     }
-    // }
-    // 
-    //Try logging the value of the cell 
+    //Here i implement onblur prefill using 'code' as my condition.
+    //If there is a similar code in the database, then i prefil the rest of the row with 
+    //the appropriate data
     async onblur(cell, evt) {
         await super.onblur(cell, evt);
-        const value = cell?.value?.toString().trim();
-        console.log(value);
+        console.log('cell.value?.io');
+        //
+        // Step 1: Is this the cell of interest?if not, discontinue.
+        if (cell.index[1] !== 'code')
+            return;
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //2.1.Get the code
+        const code = cell.io?.value;
+        //
+        //If the code is undefined, discontinue this process.
+        if (code === undefined)
+            return;
+        //
+        //If code is null, you discontinue
+        if (code === null)
+            return;
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        const sql = `
+        select 
+                purchase.ref as ref,
+                product.code as code,
+                product.name as \`product.name\`,
+                purchase.qty as qty,
+                purchase.unit as unit,
+                purchase.price as price
+            from
+                purchase
+                inner join product on purchase.product=product.product
+        WHERE 
+           code = '${code}'
+        `;
+        //
+        //4.Execute the sql to get some result.
+        const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        //
+        //Test whether the result is empty
+        if (results.length === 0)
+            return;
+        //
+        //5.Prefill the rest of the records with the appropriate data.  
+        this.prefill(results, cell);
+    }
+    //
+    //Prefill the rest of the record with the appropriate results.
+    //ref is the cell from which i lost focus.
+    prefill(results, ref) {
+        //
+        // 1. Get the first result (assuming one result per code)
+        const data = results[0];
+        //
+        // 2. Access the row index of the cell
+        const row = ref.index[0];
+        //
+        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
+        const parent = ref.parent;
+        //
+        //Go through the data keys using them as the column index to retrieve 
+        // and fill the corresponding cell
+        //
+        //Ensure the parent has cells indexed.
+        if (parent.cells_indexed === undefined)
+            throw new mutall_error('indexed cells not found');
+        //
+        //Go through the keys and for each key, identify the corresponding
+        //  cell and fill its value with appropriate data.
+        for (const key in data) {
+            //
+            //Get the cell
+            const input_cell = parent.cells_indexed[row][key];
+            //
+            //Proceed to filling the corresponding cells with appropriate data.
+            //
+            //Get the io of the cell
+            const input_io = input_cell.io;
+            //
+            //Ensure io is present before proceeding to set the value.
+            if (input_io === undefined)
+                throw new mutall_error('io was not found');
+            //
+            //Set the value of the io to the value of the the current key in the data object
+            input_io.value = data[key];
+        }
     }
     //Override the default show panel behavior so that if no image is available
     //the panel is not shown
@@ -643,7 +721,7 @@ export class supplier extends mypanel {
                     business.tel as \`business.tel:supplier\`,
                     business.email as \`business.email:supplier\`,
                     business.address as \`business.address:supplier\`,
-                    business.pin as \`business.pin:supplier\`
+                    supplier.pin as \`supplier.pin:supplier\`
                 from
                     supplier
                     left join business on supplier.business = business.business        
@@ -729,15 +807,14 @@ export class supplier extends mypanel {
         if (supplier_name === null)
             return;
         //
-        //
         //3.Formulate an sql for retrieving the desired data.
         const sql = `
         SELECT 
-            business.title,
-            business.tel,
-            business.email,
-            business.address,
-            business.pin
+            business.title as \`business.title:supplier\`,
+            business.tel \`business.tel:supplier\`,
+            business.email \`business.email:supplier\`,
+            business.address \`business.address:supplier\`,
+            supplier.pin \`supplier.pin:supplier\`
         FROM 
             business
             inner join supplier on supplier.business= business.business
@@ -748,26 +825,53 @@ export class supplier extends mypanel {
         //
         //4.Execute the sql to get some result.
         const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
-        console.log(results);
         //
         //Test whether the result is empty
         if (results.length === 0)
             return;
-        //5. ..otherwise we prefill the rest of the records with the appropriate data.  
-        // const supplierData = results[0];
         //
-        const supplierData = results[0];
-        const rowIndex = cell.index[0]; // get row index from current cell
-        // Step 5: Use cells_indexed to set values in the same row
-        for (const [key, value] of Object.entries(supplierData)) {
-            // Skip name, already handled
-            if (key === "name")
-                continue;
-            // Get the target cell using the key as the column name
-            const targetCell = this.cells_indexed?.[rowIndex]?.[key];
-            if (targetCell) {
-                targetCell.value = value;
-            }
+        //5.Prefill the rest of the records with the appropriate data.  
+        this.prefill(results, cell);
+    }
+    //
+    //Prefill the rest of the record with the appropriate results.
+    //ref is the cell from which i lost focus.
+    prefill(results, ref) {
+        //
+        // 1. Get the first result (assuming one result per supplier)
+        const data = results[0];
+        //
+        // 2. Access the row index of the cell
+        const row = ref.index[0];
+        //
+        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
+        const parent = ref.parent;
+        //
+        //Go through the data keys using them as the column index to retrieve 
+        // and fill the corresponding cell
+        //
+        //Ensure the parent has cells indexed.
+        if (parent.cells_indexed === undefined)
+            throw new mutall_error('indexed cells not found');
+        //
+        //Go through the keys and for each key, identify the corresponding
+        //  cell and fill its value with appropriate data.
+        for (const key in data) {
+            //
+            //Get the cell
+            const input_cell = parent.cells_indexed[row][key];
+            //
+            //Proceed to filling the corresponding cells with appropriate data.
+            //
+            //Get the io of the cell
+            const input_io = input_cell.io;
+            //
+            //Ensure io is present before proceeding to set the value.
+            if (input_io === undefined)
+                throw new mutall_error('io was not found');
+            //
+            //Set the value of the io to the value of the the current key in the data object
+            input_io.value = data[key];
         }
     }
     //
@@ -855,17 +959,19 @@ class receipt extends peer {
         receipt.receipt as \`receipt.receipt\`,
         #
         receipt.ref as \`receipt.ref\`,
+		#
+		#The accuracy of gemini transcribing the receipt
+		receipt.accuracy,
        
         receipt.date as \`receipt.date\`,
         receipt.amount as \`receipt.amount\`,
         receipt.vat as \`receipt.vat\`,
+		receipt.vat_reg_no as \`receipt.vat_reg_no\`,
+		receipt.amount as \`receipt.vat_amount\`,
         #etr.staff_name as \`etr.staff_name\`,
         #etr.teller_num as \`etr.teller_num\`,
         #etr.invoice_num as \`etr.invoice_num\`,
-        receipt.description as \`receipt.description\`,
-        #
-        #For tracking the intern who transcribed the receipt
-        intern.name as \`intern.name\`
+        receipt.description as \`receipt.description\`
     from
         receipt
         #
@@ -978,6 +1084,11 @@ class image extends peer {
         };
         //    
         super(image.sql, 'image.image', '#image', options, parent);
+    }
+    async show() {
+        await super.show();
+        //
+        // add the navigation buttons
     }
 }
 //The panel that shows the scanned image files
