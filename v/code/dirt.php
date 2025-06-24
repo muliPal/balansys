@@ -10,13 +10,13 @@
     </head>
     <script type="module">
         //
-        import {transcription} from './transcription.js';
+        import {dirt} from './dirt.js';
         //
         window.onload = async () => {
             //
             //Create the class to support the transcription work
-            const page = new transcription();
-            //
+            const page = new dirt();
+            //3
             //Complete the construction of a page
             await page.init();
             //

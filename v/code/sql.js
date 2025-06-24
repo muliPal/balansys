@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // 
 // The schema.js file is part of the Mutall library, which provides essential functionality 
 // for accessing and managing key components and data structures across the entire project.
@@ -7,10 +16,6 @@ import { view, mutall_error } from "../../../schema/v/code/schema.js";
 // This approach lets you package related queries in a class structure for easier reuse and modification.
 // Converting to JSON format eliminates repetitive SQL code when implementing similar database behaviors, improving maintainability.
 export class select extends view {
-    fields;
-    from;
-    where;
-    orderby;
     // 
     // Define a property that describes the fields getting selected
     // Class properties defining SQL query components: the query string, fields to select, 
@@ -56,20 +61,22 @@ export class select extends view {
     }
     // 
     //Builds the SQL query, executes it via PHP,and returns the retrieved data
-    async exec() {
-        //  
-        // get the sql
-        const sql = this.build();
-        //
-        //Search for the database name in the view hierarchy
-        const dbname = this.search_option('dbname');
-        //
-        //Report an error if the dbname cannot be found
-        if (!dbname)
-            throw new mutall_error('No database found in the view hierarchy');
-        // 
-        // executing the sqls from the build metho
-        const results = await this.exec_php("database", [dbname, false], "get_sql_data", [sql]);
-        return results;
+    exec() {
+        return __awaiter(this, void 0, void 0, function* () {
+            //  
+            // get the sql
+            const sql = this.build();
+            //
+            //Search for the database name in the view hierarchy
+            const dbname = this.search_option('dbname');
+            //
+            //Report an error if the dbname cannot be found
+            if (!dbname)
+                throw new mutall_error('No database found in the view hierarchy');
+            // 
+            // executing the sqls from the build metho
+            const results = yield this.exec_php("database", [dbname, false], "get_sql_data", [sql]);
+            return results;
+        });
     }
 }

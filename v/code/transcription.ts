@@ -1,37 +1,37 @@
 import {
-    grid, cell, root,table_options, plan, homozone, drivers, panel,
+    grid, cell, root, table_options, plan, homozone, drivers, panel,
     driver_source
 } from "../../../outlook/v/zone/zone.js";
-import { view, label, mutall_error, basic_value, mymap, fuel} from "../../../schema/v/code/schema.js";
-import {resizer} from "../../../resizer/v/code/resize.js";
-import {select} from "./sql.js";
+import { view, label, mutall_error, basic_value, mymap, fuel } from "../../../schema/v/code/schema.js";
+import { resizer } from "../../../resizer/v/code/resize.js";
+import { select } from "./sql.js";
 import { io } from "../../../schema/v/code/io.js";
-// import {authoriser} from "../../../authoriser/v/code/authoriser.js"
+import { authoriser } from "../../../authoriser/v/code/authoriser.js";
 //
 //
 //A general panel purposely built for this transcription application
-abstract class mypanel extends panel.panel{
+abstract class mypanel extends panel.panel {
     //
     //The plan of this panel
-    public abstract plan:plan;
+    public abstract plan: plan;
     //
     //The constructor of this panel exposes assumes teh driver is of the sql type
     // and therfore exposes the the sql statement (rather than the driver)
 
-     constructor(
-        public sql:string,
-         row_index:string, 
-         anchor: HTMLElement | string, 
-         options:table_options, 
-         parent: view
-    ){
+    constructor(
+        public sql: string,
+        row_index: string,
+        anchor: HTMLElement | string,
+        options: table_options,
+        parent: view
+    ) {
         //
         //Define the general data source for the panels in this module
         const ds: driver_source = {
-            type:'sql',
+            type: 'sql',
             sql,
             row_index,
-            dbname:'balansys'
+            dbname: 'balansys'
         }
         //
         super(ds, anchor, options, parent);
@@ -41,30 +41,30 @@ abstract class mypanel extends panel.panel{
 //A peer is a panel that represent a diferent view of the same image. This
 //class allows us to program peers consistently, i.e., without caring how they
 //are contained. That means putting panels in a group does not make them peers!
-export abstract class peer extends mypanel{
+export abstract class peer extends mypanel {
     //
     //Currently all the peers are managed as a group
-    declare parent:panel.group;
+    declare parent: panel.group;
     //
     //All peer panels have a driver source that looks like...
-    declare driver_source:{type:'sql', sql:string, row_index:string}
+    declare driver_source: { type: 'sql', sql: string, row_index: string }
     //
     constructor(
-        sql: string, 
-        row_index_cname: string, 
-        anchor:HTMLElement|string,
-        options: table_options, 
+        sql: string,
+        row_index_cname: string,
+        anchor: HTMLElement | string,
+        options: table_options,
         //
         //Peers are managed as a unit,
-        parent: panel.group, 
-    ){
+        parent: panel.group,
+    ) {
         super(sql, row_index_cname, anchor, options, parent);
     }
     //
-    //If you click on a peer, the transcription image primary key changes 
-    //accordingly, causing all other peers to show their new selections. 
-    //The consumer is unaffected. 
-    async onclick(cell:cell, evt:MouseEvent):Promise<void>{
+    //If you click on a peer, the transcription image primary key changes
+    //accordingly, causing all other peers to show their new selections.
+    //The consumer is unaffected.
+    async onclick(cell: cell, evt: MouseEvent): Promise<void> {
         //
         //Perform the action being overriden, i.e, the cell selection
         await super.onclick(cell, evt);
@@ -72,7 +72,7 @@ export abstract class peer extends mypanel{
         //Show selection on related panels
         //
         //Get the new image key.
-        const image_pk:string  =cell.index[this.orientation];
+        const image_pk: string = cell.index[this.orientation];
         //
         //Ignore this click if the image has not changed after the click (1)
         if (image_pk === transcription.image_pk) return;
@@ -86,7 +86,7 @@ export abstract class peer extends mypanel{
         //Redraw the supplier panel
         await tv.supplier.show();
         //
-        //Update the selection of the tanscription group, except the one where 
+        //Update the selection of the tanscription group, except the one where
         // the click has occurred
         tv.image_group.show_selection(cell);
         //
@@ -96,29 +96,29 @@ export abstract class peer extends mypanel{
 
     //
     //Show the selection of this peer, by highlighting the image followed
-    // by a scrolling the selected cell into view. The given cell was the one 
+    // by a scrolling the selected cell into view. The given cell was the one
     // clicked on. We use it to determin if this peer needs to be considered
     // for showing of selection
-    async show_selection(clicked?:cell):Promise<void>{
+    async show_selection(clicked?: cell): Promise<void> {
         //
-        //Do not repaint this peer if the clicked cell comes from this zone 
+        //Do not repaint this peer if the clicked cell comes from this zone
         if (clicked?.parent === this) return;
         //
         //Get the indexing coordinates of the cell to select
         //
         //Get the primary key of the image to show; its the first coordinate
-        let pk:string|undefined = transcription.image_pk;
+        let pk: string | undefined = transcription.image_pk;
         //
         //If the primary key is absent, then assume that this is a new consumer
-        // Set pk to be the first image in this panel. It should be shared with 
+        // Set pk to be the first image in this panel. It should be shared with
         // all the peers
-        if (pk===undefined) pk = (transcription.image_pk = this.get_1st_image());
+        if (pk === undefined) pk = (transcription.image_pk = this.get_1st_image());
         //
         //Get the index of the desired cell
         const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
         //
         //Get the indexed grid from the indexed cells of this homozone
-        const cell2:cell|undefined = this.cells_indexed?.[row]?.[col];
+        const cell2: cell | undefined = this.cells_indexed?.[row]?.[col];
         //
         //Its an error if this cell cannot be found
         if (!cell2) throw new mutall_error(`Unable to find cell ['${row}', '${col}'] of this peer`);
@@ -128,21 +128,21 @@ export abstract class peer extends mypanel{
         //
         //Scroll the grid to the view so that the record shows at the start of
         //the list view
-        cell2.td.scrollIntoView({block:'center', inline:'center'});
+        cell2.td.scrollIntoView({ block: 'center', inline: 'center' });
     }
 
     //Returns the primary key of the first record in this panel
-    get_1st_image():string{
+    get_1st_image(): string {
         //
         //Get the orientation of this homozone; it is designed so that the axis
         // parallel to this alines with the primary keys
-        const dim:number = this.orientation;
+        const dim: number = this.orientation;
         //
-        //Get thh axis primary key axis 
-        const axis:root.axis = this.axes[dim];
+        //Get thh axis primary key axis
+        const axis: root.axis = this.axes[dim];
         //
         //Get the first mark
-        const mark:string = axis.ticks[0].mark;
+        const mark: string = axis.ticks[0].mark;
         //
         //return the mark
         return mark;
@@ -150,19 +150,19 @@ export abstract class peer extends mypanel{
 
     //Before showing a peer, adjust its driver sql to take the current
     //consumer setting into account
-    get_modified_driver_sql():string|undefined{
+    get_modified_driver_sql(): string | undefined {
         //
         //Add the condition that limits images to the current consumer if there is one
-        const where:string = transcription.consumer_pk?`where consumer.consumer = ${transcription.consumer_pk}`:''; 
+        const where: string = transcription.consumer_pk ? `where consumer.consumer = ${transcription.consumer_pk}` : '';
         //
         //Complete the sql, limiting the display to 20 case in this debugging phase
-        const sql:string = `
+        const sql: string = `
             ${this.sql}
             ${where}
                 #
-                #During this development phase, limit to 20 images. Consider 
+                #During this development phase, limit to 20 images. Consider
                 #pagination in future
-                 limit 20
+                 #limit 20
             `;
         //
         //return the sql
@@ -171,53 +171,54 @@ export abstract class peer extends mypanel{
 }
 //
 //Transcription is the page that helps us to digitize images of physical receipts
-export class transcription extends panel.group{
-    public resizer?:resizer;
+export class transcription extends panel.group {
+    public resizer?: resizer;
+    public authoriser: authoriser = new authoriser();
     //
     // Add the authoriser
     // public authoriser=new authoriser(this,'#launch')
     //
-    public image_group:image_group;
-    public purchase:purchase;
-    public consumer:consumer;
-    public supplier:supplier;
-  
-    
+    public image_group: image_group;
+    public purchase: purchase;
+    public consumer: consumer;
+    public supplier: supplier;
+
+
     //
-    //Set the initial display condition manually set at 3, 300, meaning the 300th 
-    // image of the 3rd consumer. This number changes on clicking a peer or 
-    // consumer pannel. Display is defined as static so that we can access it 
-    // from any where, i.e., without following the view has-a hierarchy. 
-    static Initial_display:{consumer:number, image:number} = {consumer:2, image:0};
+    //Set the initial display condition manually set at 3, 300, meaning the 300th
+    // image of the 3rd consumer. This number changes on clicking a peer or
+    // consumer pannel. Display is defined as static so that we can access it
+    // from any where, i.e., without following the view has-a hierarchy.
+    static Initial_display: { consumer: number, image: number } = { consumer: 2, image: 0 };
     //
     //The following properties are used to control the display of the transcription
     //and need to be accessed from may places. They are defined as static to support
     //this requirement.
     //
-    //This represents the image that generally controls what we see in 
+    //This represents the image that generally controls what we see in
     // the peer panels and the purchases
-    static  image_pk:string|undefined;
+    static image_pk: string | undefined;
     //
     //The current consumer primary key
-    static consumer_pk:string|undefined;
-     //
-     public zoom:number = 1
-     public rotation: number = 0;
-     public translateX: number = 0;
-     public translateY: number = 0;
-     
-    
+    static consumer_pk: string | undefined;
+    //
+    public zoom: number = 1
+    public rotation: number = 0;
+    public translateX: number = 0;
+    public translateY: number = 0;
+
+
     constructor(
         //
         //To implement the view has-a hierarchy
-        public parent?:view,
-        
-    ){
+        public parent?: view,
+
+    ) {
         //Options for controlling the transcription page
-        const options:table_options = {
-            dbname:'balansys'
+        const options: table_options = {
+            dbname: 'balansys'
         }
-        
+
         //Use an empty list to create the group
         super([], parent, options);
         //
@@ -237,84 +238,85 @@ export class transcription extends panel.group{
         await super.show();
         this.resizer = new resizer(document.body, {
             min_panel_size: 25,
-            threshold: 5,
-          });
+            threshold: 5,
+        });
+        this.authoriser.launch_with_button('#login');
     }
-//
+    //
     //Zoom in to the selected image group member
-    zoom_in(dir:boolean):void{
+    zoom_in(dir: boolean): void {
         //
         //Get the current image element
         let image = <HTMLImageElement>this.document.querySelector('.selected>img');
         //
         //Define the zoom resolution
-        const resolution:number = 0.1; 
+        const resolution: number = 0.1;
         //
         //Get scaling multiplier, based on the zoom direction
-        this.zoom =  dir? this.zoom+resolution: this.zoom-resolution;
+        this.zoom = dir ? this.zoom + resolution : this.zoom - resolution;
         //
-        //Apply the saling to the image using transform 
+        //Apply the saling to the image using transform
         image.style.transform = `scale(${this.zoom})`;
-    } 
-    //    
+    }
+    //
     // Rotate the selected image group member
-    rotate(dir: boolean): void { 
+    rotate(dir: boolean): void {
         //
         // Get the current image element
         let image = <HTMLImageElement>this.document.querySelector('.selected>img');
         if (!image) return; // Avoid errors if no image is selected
-    
+
         //
         // Define the rotation resolution
-        const resolution: number = 90; 
-    
+        const resolution: number = 90;
+
         //
         // Update rotation value based on direction
         this.rotation = dir ? this.rotation + resolution : this.rotation - resolution;
-    
+
         //
         // Apply transformation: translate + scale + rotate
         image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
     }
     // Move the image in X and Y directions
     translate(dx: number, dy: number): void {
-    //
-    // Get the currently selected image
-    let image = <HTMLImageElement>this.document.querySelector('.selected>img');
-    if (!image) return;
+        //
+        // Get the currently selected image
+        let image = <HTMLImageElement>this.document.querySelector('.selected>img');
+        if (!image) return;
 
-    //
-    // Update translation values
-    this.translateX += dx;
-    this.translateY += dy;
+        //
+        // Update translation values
+        this.translateX += dx;
+        this.translateY += dy;
 
-    //
-    // Apply transformations: translate + scale + rotate
-    image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
-}
-pan(dx: number, dy: number): void {
-    //
-    // Get the currently selected image
-    let image = <HTMLImageElement>this.document.querySelector('.selected>img');
-    if (!image) return;
+        //
+        // Apply transformations: translate + scale + rotate
+        image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
+    }
+    pan(dx: number, dy: number): void {
+        //
+        // Get the currently selected image
+        let image = <HTMLImageElement>this.document.querySelector('.selected>img');
+        if (!image) return;
 
-    //
-    // Update translation values
-    this.translateX += dx;
-    this.translateY += dy;
+        //
+        // Update translation values
+        this.translateX += dx;
+        this.translateY += dy;
 
-    //
-    // Apply all transformations correctly
-    image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
-}
+        //
+        // Apply all transformations correctly
+        image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
+    }
 
 
 
     //Complete the construction of a page by running asynchronous methods
-    async init():Promise<void>{
+    async init(): Promise<void> {
         //
         //Get the relative consumer and image display positions
-        const {consumer, image} = transcription.Initial_display;
+        const { consumer, image } = transcription.Initial_display;
         //
         //Initialize the consumer and image primary keys
         transcription.consumer_pk = await this.get_consumer_pk(consumer);
@@ -323,24 +325,24 @@ pan(dx: number, dy: number): void {
 
     //
     //Returns the primary key of the initial image to scroll to.
-    async get_initial_image_pk(i:number):Promise<string|undefined>{
+    async get_initial_image_pk(i: number): Promise<string | undefined> {
         //
         //Formulate the sql to retrieve only the i'th image
-        const sql:string = `
-            select 
-                image.image 
-            from 
+        const sql: string = `
+            select
+                image.image
+            from
                 image
                 inner join receipt on receipt.image = image.image
-                inner join consumer on receipt.consumer = consumer.consumer 
+                inner join consumer on receipt.consumer = consumer.consumer
             where
                 consumer.consumer = ${transcription.consumer_pk}
             limit 1
-            offset ${i}          
+            offset ${i}
         `
         //
         //Run the query
-        const result:Array<{image:basic_value}> = await this.exec_php(
+        const result: Array<{ image: basic_value }> = await this.exec_php(
             'database',
             ['balansys', false],
             'get_sql_data',
@@ -348,27 +350,27 @@ pan(dx: number, dy: number): void {
         );
         //
         //Return undedined if no image was found
-        if (result.length===0) return undefined;
+        if (result.length === 0) return undefined;
         //
         //Extract and return the resulting string
         return String(result[0].image);
-        
+
     }
 
     //Initialize the consumer primary key, using the display setting
-    async get_consumer_pk(i:number):Promise<string|undefined>{
+    async get_consumer_pk(i: number): Promise<string | undefined> {
         //
         //Formulate the sql to retrieve only the i'th consumer
-        const sql:string = `
-            select 
-                consumer 
-            from 
-                consumer 
-            order by consumer 
+        const sql: string = `
+            select
+                consumer
+            from
+                consumer
+            order by consumer
             limit 1 offset ${i}`
         //
         //Run the query
-        const result:Array<{consumer:basic_value}> = await this.exec_php(
+        const result: Array<{ consumer: basic_value }> = await this.exec_php(
             'database',
             ['balansys', false],
             'get_sql_data',
@@ -376,7 +378,7 @@ pan(dx: number, dy: number): void {
         );
         //
         //If there are not consumers return undefined
-        if (result.length===0) undefined 
+        if (result.length === 0) undefined
         //
         //Extract and return the resulting string
         return String(result[0].consumer);
@@ -384,47 +386,47 @@ pan(dx: number, dy: number): void {
 }
 
 //The panel that shows the owners/consumers of thses receipts
-export class consumer extends mypanel{
+export class consumer extends mypanel {
     //
-    //Save the display settings here.The map indexing key is the consumer primary 
+    //Save the display settings here.The map indexing key is the consumer primary
     //key. The indexed string is the image primary key. NB. A map is used as it
     //does not break down if you retrieve a non existing key. The structure
     //{[index:number]:number}, I think, would throw an exception, similar to
     //how array indexing behaves. Investigate this assumption
-    public displays:Map<string, string> = new Map();
+    public displays: Map<string, string> = new Map();
     //
     //The creator subpanel has this consumer as the homozone; its a margin oriented
-    // columnwise    
-    creator = new panel.creator(this, 1);    
-    
+    // columnwise
+    creator = new panel.creator(this, 1);
+
     //The plan of an image is a standard panel with ability to create new
-    //images 
-    public plan:plan = [
+    //images
+    public plan: plan = [
         //
         //The headers
         [new homozone(), this.get_header(), new homozone()],
         //
-        //The left reviewer is unchecked and will open the record if checked; the 
+        //The left reviewer is unchecked and will open the record if checked; the
         // right review is already checked and will be used for wriring the record
         [
-            new panel.reviewer(this,0, false, 'open'), 
-            this, 
-            new panel.reviewer(this,0, true, 'write')
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
+            new panel.reviewer(this, 0, true, 'write')
         ],
         //
-        //The record create functionality. The only reviewer on the right is unchecked 
+        //The record create functionality. The only reviewer on the right is unchecked
         // will write the record if checked
         [
-            new homozone(), 
-            this.creator, 
+            new homozone(),
+            this.creator,
             new panel.reviewer(this.creator, 0, false, 'write')
         ],
     ];
     //
-    constructor(parent:view){
+    constructor(parent: view) {
         //
-        const sql =`
-            select 
+        const sql = `
+            select
                 #
                 #The row index of the image homozone
                 consumer.consumer as \`consumer.consumer\`,
@@ -439,41 +441,41 @@ export class consumer extends mypanel{
                 #
                 #Join supplier to business if business is available
                 left join business on consumer.business = business.business
-            order by consumer.consumer    
+            order by consumer.consumer
             `;
         //
         //
         //Options for controlling the consumer
         //
         //Define the business label and alias it with the business title
-        const business_name:label = [undefined, 'business', 'name', undefined, ['consumer']];
+        const business_name: label = [undefined, 'business', 'name', undefined, ['consumer']];
         //
-        const options:table_options = {
+        const options: table_options = {
             //
-            ticks:[
+            ticks: [
                 //
-                //Add a label to support that a consumer name is the same as the 
+                //Add a label to support that a consumer name is the same as the
                 //business name. NB. This is an example of nested options.
-                ['consumer.name', {labels:[business_name]}],
+                ['consumer.name', { labels: [business_name] }],
             ],
             //
             //The consumer zone is transposed. This needs more thought
             //transposed:true
         }
-        //    
-        super(sql, 'consumer.consumer',  '#consumer', options, parent);
+        //
+        super(sql, 'consumer.consumer', '#consumer', options, parent);
 
-    } 
+    }
     //
     //For a consumer, the sql is independent of any other panel. It never changes
     //So the driver needs no modification
-    get_modified_driver_sql():string|undefined{return}
+    get_modified_driver_sql(): string | undefined { return }
     //
-    //Show the selected consumer, guided by display settings of the transcription 
+    //Show the selected consumer, guided by display settings of the transcription
     async show_selection(): Promise<void> {
         //
         //Do not show any  consumer selection if there is no consumer primary key
-        const pk:string|undefined = transcription.consumer_pk;
+        const pk: string | undefined = transcription.consumer_pk;
         if (!pk) return;
         //
         //Get the column index of the desired cell; it is the same one used for
@@ -481,31 +483,31 @@ export class consumer extends mypanel{
         const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
         //
         //Get the indexed grid from the indexed cells of this homozone
-        const cell:cell|undefined = this.cells_indexed?.[row]?.[col];
+        const cell: cell | undefined = this.cells_indexed?.[row]?.[col];
         //
         //It is an error if there is no cell at this coordinate
-        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row} ${col}] of consumer`); 
+        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row} ${col}] of consumer`);
         //
         //Now select the grid as a cell
         cell.select();
     }
 
     //
-    // Override the default homozone click behavior to enable actions beyond 
-    // simple cell selection. When clicking on a consumer, the consumer 
-    // component of the display updates, and the image is restored to the last 
-    // version associated with that consumer. This requires tracking the last 
-    // image for each consumer. If no previous image exists, the default 
+    // Override the default homozone click behavior to enable actions beyond
+    // simple cell selection. When clicking on a consumer, the consumer
+    // component of the display updates, and the image is restored to the last
+    // version associated with that consumer. This requires tracking the last
+    // image for each consumer. If no previous image exists, the default
     // assumption is that the last image is at relative position 0.
-    async onclick(cell:cell, evt?:MouseEvent):Promise<void>{
+    async onclick(cell: cell, evt?: MouseEvent): Promise<void> {
         //
         //Carry out the default behaviour of selecting the cell
         cell.select();
         //
-        //Extend the cell selection so that the rest of the trancription 
+        //Extend the cell selection so that the rest of the trancription
         // page is refreshed to match the new consumer (primary key)
         //
-        //Set the consumer primary key to match the current cell selection; 
+        //Set the consumer primary key to match the current cell selection;
         // that depends on this consumer's orientation
         transcription.consumer_pk = cell.index[this.orientation];
         //
@@ -513,7 +515,7 @@ export class consumer extends mypanel{
         transcription.image_pk = this.displays.get(transcription.consumer_pk);
         //
         //Get the transcription view; its the root view of this app
-        const trans:transcription = (<transcription>this.search_root_view());
+        const trans: transcription = (<transcription>this.search_root_view());
         //
         //Show the transcription group members only, i.e., its not a complete
         //transcription show
@@ -524,12 +526,12 @@ export class consumer extends mypanel{
     }
 }
 
-//The panel that shows the details of the purchased items on a receipt 
-class purchase extends mypanel{
+//The panel that shows the details of the purchased items on a receipt
+class purchase extends mypanel {
     //
-        //Define an sql for retrieving purchases unconditionally
-        static sql:string = `
-        select 
+    //Define an sql for retrieving purchases unconditionally
+    static sql: string = `
+        select
                 #
                 #The row index of the this homozone
                 purchase.purchase as \`purchase.purchase\`,
@@ -558,81 +560,81 @@ class purchase extends mypanel{
     creator = new panel.creator(this, 1);
     //
     //The plan of a purchase allows us to create and review purchase.
-    plan:plan = [
+    plan: plan = [
         //
         //The headers for purchase should be styled as frozen
         [
-            new homozone(null, {class_name:'header'}), 
-            this.get_header({class_name:'header'}), 
-            new homozone(null, {class_name:'header'})
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' }),
+            new homozone(null, { class_name: 'header' })
         ],
         //
         //There is a review on both sides of the body with a row orientation
         [
-            new panel.reviewer(this, 0, false, 'open'), 
-            this, 
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
             new panel.reviewer(this, 0, true, 'write')
         ],
         //
         //The creator
         [
-            new homozone(null), 
-            this.creator, 
+            new homozone(null),
+            this.creator,
             new panel.reviewer(this.creator, 0, false, 'write')
         ],
-        
+
     ];
     //
-    declare parent:transcription;
+    declare parent: transcription;
     //
-    constructor(parent:transcription){
+    constructor(parent: transcription) {
         //
-        const options:table_options = {
+        const options: table_options = {
             //
             //Make all the input fields visible. The default is auto. This does not
             //work. The reason is that init_table is called by the root zone. panel
-            //is not a root zone; it is the heterozne. Try this workround: ensure 
+            //is not a root zone; it is the heterozne. Try this workround: ensure
             // pass the options to the organizing heterozone on construction.
-            table_layout:'fixed',
+            table_layout: 'fixed',
             //
             //Enriching the tick mark labels
-            ticks:[
+            ticks: [
                 ['ref', {}, [undefined, 'purchase', 'ref']],
                 ['code', {}, [undefined, 'product', 'code']],
-                ['product.name',{}, [undefined, 'product', 'name']],
+                ['product.name', {}, [undefined, 'product', 'name']],
                 ['qty', {}, [undefined, 'purchase', 'qty']],
                 ['price', {}, [undefined, 'purchase', 'price']],
                 ['unit', {}, [undefined, 'product', 'unit'], [undefined, 'purchase', 'unit']],
             ]
         }
-        //    
-        super(purchase.sql, 'purchase.purchase',  '#purchase', options, parent);
+        //
+        super(purchase.sql, 'purchase.purchase', '#purchase', options, parent);
     }
     //
     //Here i implement onblur prefill using 'code' as my condition.
-    //If there is a similar code in the database, then i prefil the rest of the row with 
+    //If there is a similar code in the database, then i prefil the rest of the row with
     //the appropriate data
     async onblur(cell: cell, evt?: Event): Promise<void> {
         await super.onblur(cell, evt);
         console.log('cell.value?.io');
         //
         // Step 1: Is this the cell of interest?if not, discontinue.
-       if(cell.index[1]!=='code')return;
+        if (cell.index[1] !== 'code') return;
         //
         //2.The cell is of interest, use it to prefill the rest of the records.
         //
         //2.1.Get the code
-        const code:basic_value | undefined = cell.io?.value;
+        const code: basic_value | undefined = cell.io?.value;
         //
         //If the code is undefined, discontinue this process.
         if (code === undefined) return;
         //
         //If code is null, you discontinue
-        if(code === null)return;
+        if (code === null) return;
         //
         //3.Formulate an sql for retrieving the desired data.
-        const sql:string =`
-        select 
+        const sql: string = `
+        select
                 purchase.ref as ref,
                 product.code as code,
                 product.name as \`product.name\`,
@@ -642,77 +644,77 @@ class purchase extends mypanel{
             from
                 purchase
                 inner join product on purchase.product=product.product
-        WHERE 
+        WHERE
            code = '${code}'
         `;
         //
         //4.Execute the sql to get some result.
-        const results:Array<fuel> = await this.exec_php(
+        const results: Array<fuel> = await this.exec_php(
             'database',
-            ['balansys',false],
+            ['balansys', false],
             'get_sql_data',
             [sql]);
         //
         //Test whether the result is empty
-         if (results.length === 0) return;
+        if (results.length === 0) return;
         //
-        //5.Prefill the rest of the records with the appropriate data.  
-        this.prefill(results,cell); 
+        //5.Prefill the rest of the records with the appropriate data.
+        this.prefill(results, cell);
     }
     //
     //Prefill the rest of the record with the appropriate results.
     //ref is the cell from which i lost focus.
-    prefill(results:Array<fuel>,ref:cell) :void{
+    prefill(results: Array<fuel>, ref: cell): void {
         //
         // 1. Get the first result (assuming one result per code)
-        const data:fuel = results[0];
+        const data: fuel = results[0];
         //
         // 2. Access the row index of the cell
-        const row:string = ref.index[0];
+        const row: string = ref.index[0];
         //
         //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
-        const parent:homozone= ref.parent;
+        const parent: homozone = ref.parent;
         //
-        //Go through the data keys using them as the column index to retrieve 
+        //Go through the data keys using them as the column index to retrieve
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
-        if(parent.cells_indexed===undefined)throw new mutall_error('indexed cells not found'); 
+        if (parent.cells_indexed === undefined) throw new mutall_error('indexed cells not found');
         //
         //Go through the keys and for each key, identify the corresponding
         //  cell and fill its value with appropriate data.
-        for(const key in data){
+        for (const key in data) {
             //
             //Get the cell
-            const input_cell:cell=parent.cells_indexed[row][key]
+            const input_cell: cell = parent.cells_indexed[row][key]
             //
             //Proceed to filling the corresponding cells with appropriate data.
             //
             //Get the io of the cell
-            const input_io:io | undefined = input_cell.io;
+            const input_io: io | undefined = input_cell.io;
             //
             //Ensure io is present before proceeding to set the value.
-            if (input_io===undefined)throw new mutall_error('io was not found');
+            if (input_io === undefined) throw new mutall_error('io was not found');
             //
             //Set the value of the io to the value of the the current key in the data object
-            input_io.value=data[key];
-  }
-}
+            input_io.value = data[key];
+        }
+    }
 
     //Override the default show panel behavior so that if no image is available
     //the panel is not shown
-    async show():Promise<void>{
+    async show(): Promise<void> {
         //
         //If there is no image, do not show the purchases
         if (!transcription.image_pk) return;
         //
         //Show the default panel
         await super.show();
-    }    
-    
-    //Modify the sql of the purchase panel so that the display reflects the 
+    }
+
+    //Modify the sql of the purchase panel so that the display reflects the
     //current image of the transcription view
-    get_modified_driver_sql():string|undefined{
+    get_modified_driver_sql(): string | undefined {
         //
         //Make sure that the image is available
         if (!transcription.image_pk) throw new mutall_error('No image primary key found');
@@ -729,29 +731,29 @@ class purchase extends mypanel{
         //Return the sql
         return sql;
     }
-    
+
     //
-    //Show the last (edit) row for a purchase selection. NB. Purchases are not 
+    //Show the last (edit) row for a purchase selection. NB. Purchases are not
     //transposed
     async show_selection(): Promise<void> {
         //
         //Get the mark of the last tick in the row dimension as the row index
-        const ticks:Array<root.tick> = this.axes[this.orientation].ticks;
+        const ticks: Array<root.tick> = this.axes[this.orientation].ticks;
         //
         //If there are no purchases, then nothing can be selected
-        if (ticks.length===0) return;
-        // 
+        if (ticks.length === 0) return;
+        //
         //Get the last row
-        const row:string = ticks[ticks.length-1].mark;
+        const row: string = ticks[ticks.length - 1].mark;
         //
         //The column index is the one one used for selection
-        const col:string = this.selection_cname;
+        const col: string = this.selection_cname;
         //
         //Get the indexed cell from the indexed cells of this homozone
-        const cell:cell|undefined = this.cells_indexed?.[row]?.[col];
+        const cell: cell | undefined = this.cells_indexed?.[row]?.[col];
         //
         //It is an error if there is no cell at this coordinate
-        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`); 
+        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
         //
         //Select the cell
         cell.select();
@@ -759,10 +761,10 @@ class purchase extends mypanel{
 }
 
 //The supplier is a panel that shows the suppliers of the purchased products
-export class supplier extends mypanel{
+export class supplier extends mypanel {
 
-    static sql =`
-        with 
+    static sql = `
+        with
             mysupplier as (
                 select
                     #
@@ -777,9 +779,9 @@ export class supplier extends mypanel{
                     supplier.pin as \`supplier.pin:supplier\`
                 from
                     supplier
-                    left join business on supplier.business = business.business        
-            ) 
-            select 
+                    left join business on supplier.business = business.business
+            )
+            select
                 image.image as \`image.image\`,
                 mysupplier.*
             from
@@ -788,55 +790,55 @@ export class supplier extends mypanel{
                 left join mysupplier on receipt.supplier = mysupplier.\`supplier.supplier\`
             `;
     //
-    public plan:plan = [
+    public plan: plan = [
         //
         //The headers. Give class names to headers to allow for easily freezing them
         [
-            new homozone(null, {class_name:'header'}), 
-            new homozone(null, {class_name:'header'}), 
-            this.get_header({class_name:'header'}), 
-            new homozone(null, {class_name:'header'})
+            new homozone(null, { class_name: 'header' }),
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' }),
+            new homozone(null, { class_name: 'header' })
         ],
         //
         //There is a reviewer on both sides of the body with a row orientation.
         //The left one is unchecked and used for openinng a record; the right one
         //is checked and used for writing the record
         [
-            this.get_leftie(), 
-            new panel.reviewer(this, 0, false, 'open'), 
-            this, 
+            this.get_leftie(),
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
             //
             //Do not refresh the panel after writing
-            new panel.reviewer(this, 0, true, 'write',{refresh_after_write:false})
+            new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
         ],
     ];
 
     //Create the constructor for the supplier panel
-    constructor(parent:panel.group){
+    constructor(parent: panel.group) {
         //
-        const row_index_cname: string = 'image.image'; 
-        const options: table_options={
+        const row_index_cname: string = 'image.image';
+        const options: table_options = {
             //
             //The receipt primary key is important for saving a receipt but need
             //not be visible
-            ticks:[
+            ticks: [
                 //
                 //Hide the supplier primary key
-                ['supplier.supplier', {hidden:true}],
+                ['supplier.supplier', { hidden: true }],
                 //
                 //Associate the supplier with a business name. The business will
                 //also need to be aliased with a matching title
-                ['supplier.name', {labels:[[undefined, 'business', 'name',undefined,['supplier']]]}]
+                ['supplier.name', { labels: [[undefined, 'business', 'name', undefined, ['supplier']]] }]
             ],
-        }; 
+        };
         //
-        super(supplier.sql, row_index_cname, '#supplier', options, parent) 
-               
+        super(supplier.sql, row_index_cname, '#supplier', options, parent)
+
     }
     //
     // Here, I override the default onblur event to implement custom behavior:
     // 1. Retrieve the value of the first cell in the row (supplier.name).
-    // 2. Use this value as a condition in an SQL query to fetch additional details 
+    // 2. Use this value as a condition in an SQL query to fetch additional details
     //    about the supplier from the database.
     // 3. If data for the supplier is found, prefill the rest of the row with the retrieved data.
     // 4. If no data is found, leave the row unchanged.
@@ -846,121 +848,121 @@ export class supplier extends mypanel{
         await super.onblur(cell, evt);
         //
         // Step 1: Is this the cell of interest?if not, discontinue.
-       if(cell.index[1]!=='supplier.name')return;
+        if (cell.index[1] !== 'supplier.name') return;
         //
         //2.The cell is of interest, use it to prefill the rest of the records.
         //
         //2.1.Get the name of the supplier.
-        const supplier_name:basic_value | undefined = cell.io?.value;
+        const supplier_name: basic_value | undefined = cell.io?.value;
         //
         //If the supplier name is undefined, discontinue this process.
         if (supplier_name === undefined) return;
         //
         //If supplier name is null, you discontinue
-        if(supplier_name === null)return;
+        if (supplier_name === null) return;
         //
         //3.Formulate an sql for retrieving the desired data.
-        const sql:string =`
-        SELECT 
+        const sql: string = `
+        SELECT
             business.title as \`business.title:supplier\`,
             business.tel \`business.tel:supplier\`,
             business.email \`business.email:supplier\`,
             business.address \`business.address:supplier\`,
             supplier.pin \`supplier.pin:supplier\`
-        FROM 
+        FROM
             business
             inner join supplier on supplier.business= business.business
-            
-        WHERE 
+
+        WHERE
            supplier.name = '${supplier_name}'
         `;
         //
         //4.Execute the sql to get some result.
-        const results:Array<fuel> = await this.exec_php(
+        const results: Array<fuel> = await this.exec_php(
             'database',
-            ['balansys',false],
+            ['balansys', false],
             'get_sql_data',
             [sql]);
         //
         //Test whether the result is empty
-         if (results.length === 0) return;
+        if (results.length === 0) return;
         //
-        //5.Prefill the rest of the records with the appropriate data.  
-        this.prefill(results,cell); 
-    }  
+        //5.Prefill the rest of the records with the appropriate data.
+        this.prefill(results, cell);
+    }
     //
     //Prefill the rest of the record with the appropriate results.
     //ref is the cell from which i lost focus.
-    prefill(results:Array<fuel>,ref:cell) :void{
+    prefill(results: Array<fuel>, ref: cell): void {
         //
         // 1. Get the first result (assuming one result per supplier)
-        const data:fuel = results[0];
+        const data: fuel = results[0];
         //
         // 2. Access the row index of the cell
-        const row:string = ref.index[0];
+        const row: string = ref.index[0];
         //
         //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
-        const parent:homozone= ref.parent;
+        const parent: homozone = ref.parent;
         //
-        //Go through the data keys using them as the column index to retrieve 
+        //Go through the data keys using them as the column index to retrieve
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
-        if(parent.cells_indexed===undefined)throw new mutall_error('indexed cells not found'); 
+        if (parent.cells_indexed === undefined) throw new mutall_error('indexed cells not found');
         //
         //Go through the keys and for each key, identify the corresponding
         //  cell and fill its value with appropriate data.
-        for(const key in data){
+        for (const key in data) {
             //
             //Get the cell
-            const input_cell:cell=parent.cells_indexed[row][key]
+            const input_cell: cell = parent.cells_indexed[row][key]
             //
             //Proceed to filling the corresponding cells with appropriate data.
             //
             //Get the io of the cell
-            const input_io:io | undefined = input_cell.io;
+            const input_io: io | undefined = input_cell.io;
             //
             //Ensure io is present before proceeding to set the value.
-            if (input_io===undefined)throw new mutall_error('io was not found');
+            if (input_io === undefined) throw new mutall_error('io was not found');
             //
             //Set the value of the io to the value of the the current key in the data object
-            input_io.value=data[key];
-  }
-   
-}
+            input_io.value = data[key];
+        }
+
+    }
     //
     //Show the first/only row for a consumer selection.
     async show_selection(): Promise<void> {
         //
         //Get the mark of the first tick in the row dimension as the row index
-            //
-            const ticks:Array<root.tick> = this.axes[this.orientation].ticks;
-            //
-            //If there are no purchases, then nothing can be selected
-            if (ticks.length===0) return;
-            // 
-            //Get the first row index
-            const x:string = ticks[0].mark;
+        //
+        const ticks: Array<root.tick> = this.axes[this.orientation].ticks;
+        //
+        //If there are no purchases, then nothing can be selected
+        if (ticks.length === 0) return;
+        //
+        //Get the first row index
+        const x: string = ticks[0].mark;
         //
         //The 2nd index is the name of the column used for selection
-        const y:string = this.selection_cname;
+        const y: string = this.selection_cname;
         //
         //Use the zone's orientation to determine the row and colum indices
         const [row, col] = this.orientate([x, this.orientation], y)
         //
         //Get the indexed cell from the indexed cells of this homozone
-        const cell:cell|undefined = this.cells_indexed?.[row]?.[col];
+        const cell: cell | undefined = this.cells_indexed?.[row]?.[col];
         //
         //It is an error if there is no cell at this coordinate
-        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`); 
+        if (!cell) throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
         //
         //Select the cell
         cell.select();
     }
-    
-    //Modify the sql of the purchase panel so that the display reflects the 
+
+    //Modify the sql of the purchase panel so that the display reflects the
     //current image of the transcription view
-    get_modified_driver_sql():string|undefined{
+    get_modified_driver_sql(): string | undefined {
         //
         //Make sure that the image is available
         if (!transcription.image_pk) throw new mutall_error('No image primary key found');
@@ -977,25 +979,25 @@ export class supplier extends mypanel{
 }
 //
 //
-export class image_group extends panel.group{
+export class image_group extends panel.group {
     //
-    //The members of the image group share the same column name for row 
+    //The members of the image group share the same column name for row
     // indexing
     public row_index_cname = 'image.image';
     //
     //Redefine the parent of the image group
-    declare parent:transcription;
+    declare parent: transcription;
     //
     constructor(
         //
-        parent?:transcription
-    ){
+        parent?: transcription
+    ) {
         //
         //Crratting the group with no members.
         super([], parent);
         //
         //Creating the members using the created group
-        this.members =[
+        this.members = [
             new file(this),
             new image(this),
             new receipt(this),
@@ -1009,7 +1011,7 @@ export class image_group extends panel.group{
 //The panel that shows the header of a receipt
 class receipt extends peer {
     //
-    static sql = `select 
+    static sql = `select
         #
         #The row index of the this homozone
         image.image as \`image.image\`,
@@ -1021,7 +1023,7 @@ class receipt extends peer {
 		#
 		#The accuracy of gemini transcribing the receipt
 		receipt.accuracy,
-       
+
         receipt.date as \`receipt.date\`,
         receipt.amount as \`receipt.amount\`,
         receipt.vat as \`receipt.vat\`,
@@ -1042,14 +1044,14 @@ class receipt extends peer {
         inner join consumer on receipt.consumer = consumer.consumer
         left join business on consumer.business = business.business
         left join etr on receipt.etr = etr.etr
-        left join intern on receipt.intern = intern.intern 
+        left join intern on receipt.intern = intern.intern
     `;
     //
     //The receipt panel cannot create be used for creating new entries
     //(but we can create images that intern creates receipts). There is
     // reviewer on the right that opens up a record and another one on the right
-    //that saves saves the record. Refreshing the panel is optional 
-    public plan:plan = [
+    //that saves saves the record. Refreshing the panel is optional
+    public plan: plan = [
         //
         //The headers. Give class names to headers to allow for easily freezing them
         [
@@ -1073,10 +1075,10 @@ class receipt extends peer {
     ];
     //
     //The receipt panel is part of the image group; other members are file and image
-    constructor(parent:panel.group) {
+    constructor(parent: panel.group) {
         //
         //
-        const options:table_options = {
+        const options: table_options = {
             //
             //Set the size of all fields to be 10 characters
             size: 10,
@@ -1095,17 +1097,17 @@ class receipt extends peer {
                 ['supplier.name', {}, [undefined, 'business', 'name']],
             ],
         };
-        //    
+        //
         super(receipt.sql, 'image.image', '#receipt', options, parent);
     }
-    
+
 }
 
-//The panel that shows the actual scanned images of receipts 
-class image extends peer{
-        
-    static sql =`
-            select 
+//The panel that shows the actual scanned images of receipts
+class image extends peer {
+
+    static sql = `
+            select
                 #
                 #The row index of the file homozone
                 image.image as \`image.image\`,
@@ -1118,11 +1120,11 @@ class image extends peer{
                 inner join receipt on receipt.image = image.image
                 inner join consumer on receipt.consumer = consumer.consumer
             `;
-    
+
 
     //The plan of an image is a standard panel with ability to create new
-    //images 
-    public plan:plan = [
+    //images
+    public plan: plan = [
         //
         //The headers
         [new homozone(null), this.get_header()],
@@ -1131,25 +1133,25 @@ class image extends peer{
         //
         //The record create functionality
         [new homozone(null), new panel.creator(this, 1)],
-        
+
     ];
     //
     //The image panel is part of the image group; other members are file and receipt
-    constructor(parent:panel.group){
+    constructor(parent: panel.group) {
         //
-        const options:table_options = {
-            ticks:[
+        const options: table_options = {
+            ticks: [
                 //
                 //Primary keys will be shown as read only values
-                ['pk', {io_type:'read_only'}],
+                ['pk', { io_type: 'read_only' }],
                 //
                 //Image will be shown as an image
-                ['image', {io_type:'image'}],
+                ['image', { io_type: 'image' }],
             ]
         }
-        //    
-        super(image.sql, 'image.image',  '#image', options, parent);
-    }   
+        //
+        super(image.sql, 'image.image', '#image', options, parent);
+    }
     async show(): Promise<void> {
         await super.show();
         //
@@ -1158,11 +1160,11 @@ class image extends peer{
 }
 
 //The panel that shows the scanned image files
-class file extends peer{
+class file extends peer {
     //
-        //
-        static sql =`
-            select 
+    //
+    static sql = `
+            select
                 #
                 #The row index of the image homozone
                 image.image as \`image.image\`,
@@ -1173,38 +1175,38 @@ class file extends peer{
                 image
                 inner join folder on image.folder = folder.folder
                 inner join receipt on receipt.image = image.image
-                inner join consumer on receipt.consumer = consumer.consumer        
+                inner join consumer on receipt.consumer = consumer.consumer
            `;
     //
-     //The plan of an image is a standard panel (without ability to create new
-    //or update files) 
-    public plan:plan = [
+    //The plan of an image is a standard panel (without ability to create new
+    //or update files)
+    public plan: plan = [
         //
         //The headers should be styled as flozen
         [
-            new homozone(null, {class_name:'header'}), 
-            this.get_header({class_name:'header'})
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' })
         ],
         //
         [this.get_leftie(), this],
     ];
     //
     //The file panel is part of the image group; other members are receipt and image
-    constructor(parent:panel.group){
-        
+    constructor(parent: panel.group) {
+
         //
         //
         //Options for controlling file panel
-        const options:table_options = {
+        const options: table_options = {
             //
             //Files will be shown in read-nly mode
-            io_type:'read_only',
+            io_type: 'read_only',
             //
-            ticks:[
-                
-            ]    
+            ticks: [
+
+            ]
         }
-        //    
-        super(file.sql, 'image.image',  '#file', options, parent);
-    }   
+        //
+        super(file.sql, 'image.image', '#file', options, parent);
+    }
 }
