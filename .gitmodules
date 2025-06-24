@@ -1,0 +1,3 @@
+[submodule "libs/outlook"]
+	path = libs/outlook
+	url = https://github.com/muliPal/outlook.git
