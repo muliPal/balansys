@@ -154,7 +154,11 @@ export class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider
                 #pagination in future
+<<<<<<< HEAD
                  #limit 20
+=======
+                 limit 20
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
             `;
         //
         //return the sql
@@ -194,6 +198,7 @@ export class transcription extends panel.group {
     }
     //
     // the show method
+<<<<<<< HEAD
     show() {
         const _super = Object.create(null, {
             show: { get: () => super.show }
@@ -205,6 +210,13 @@ export class transcription extends panel.group {
                 threshold: 5,
             });
             this.authoriser.launch_with_button('#login');
+=======
+    async show() {
+        await super.show();
+        this.resizer = new resizer(document.body, {
+            min_panel_size: 25,
+            threshold: 5,
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
         });
     }
     //
@@ -490,6 +502,63 @@ export class consumer extends mypanel {
 //The panel that shows the details of the purchased items on a receipt
 class purchase extends mypanel {
     //
+<<<<<<< HEAD
+=======
+    //Define an sql for retrieving purchases unconditionally
+    static sql = `
+        select 
+                #
+                #The row index of the this homozone
+                purchase.purchase as \`purchase.purchase\`,
+                #
+                purchase.ref as ref,
+                product.code as code,
+                product.name as \`product.name\`,
+                purchase.qty as qty,
+                purchase.unit as unit,
+                purchase.price as price
+            from
+                purchase
+                #
+                #Link purchase to image
+                inner join receipt on purchase.receipt = receipt.receipt
+                inner join image on receipt.image = image.image
+                inner join product on purchase.product=product.product
+        `;
+    //
+    //The creator sub panel
+    //
+    //Set the options to cause the onblur event to be raised on the creator.
+    //let options:table_options ;
+    //creator = new panel.creator(this, 1, options );
+    creator = new panel.creator(this, 1);
+    //
+    //The plan of a purchase allows us to create and review purchase.
+    plan = [
+        //
+        //The headers for purchase should be styled as frozen
+        [
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' }),
+            new homozone(null, { class_name: 'header' })
+        ],
+        //
+        //There is a review on both sides of the body with a row orientation
+        [
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
+            new panel.reviewer(this, 0, true, 'write')
+        ],
+        //
+        //The creator
+        [
+            new homozone(null),
+            this.creator,
+            new panel.reviewer(this.creator, 0, false, 'write')
+        ],
+    ];
+    //
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     constructor(parent) {
         //
         const options = {
@@ -547,6 +616,7 @@ class purchase extends mypanel {
     }
     //
     //Here i implement onblur prefill using 'code' as my condition.
+<<<<<<< HEAD
     //If there is a similar code in the database, then i prefil the rest of the row with
     //the appropriate data
     onblur(cell, evt) {
@@ -578,6 +648,34 @@ class purchase extends mypanel {
             //3.Formulate an sql for retrieving the desired data.
             const sql = `
         select
+=======
+    //If there is a similar code in the database, then i prefil the rest of the row with 
+    //the appropriate data
+    async onblur(cell, evt) {
+        await super.onblur(cell, evt);
+        console.log('cell.value?.io');
+        //
+        // Step 1: Is this the cell of interest?if not, discontinue.
+        if (cell.index[1] !== 'code')
+            return;
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //2.1.Get the code
+        const code = cell.io?.value;
+        //
+        //If the code is undefined, discontinue this process.
+        if (code === undefined)
+            return;
+        //
+        //If code is null, you discontinue
+        if (code === null)
+            return;
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        const sql = `
+        select 
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
                 purchase.ref as ref,
                 product.code as code,
                 product.name as \`product.name\`,
@@ -587,6 +685,7 @@ class purchase extends mypanel {
             from
                 purchase
                 inner join product on purchase.product=product.product
+<<<<<<< HEAD
         WHERE
            code = '${code}'
         `;
@@ -601,6 +700,21 @@ class purchase extends mypanel {
             //5.Prefill the rest of the records with the appropriate data.
             this.prefill(results, cell);
         });
+=======
+        WHERE 
+           code = '${code}'
+        `;
+        //
+        //4.Execute the sql to get some result.
+        const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        //
+        //Test whether the result is empty
+        if (results.length === 0)
+            return;
+        //
+        //5.Prefill the rest of the records with the appropriate data.  
+        this.prefill(results, cell);
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     }
     //
     //Prefill the rest of the record with the appropriate results.
@@ -616,7 +730,11 @@ class purchase extends mypanel {
         //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
         const parent = ref.parent;
         //
+<<<<<<< HEAD
         //Go through the data keys using them as the column index to retrieve
+=======
+        //Go through the data keys using them as the column index to retrieve 
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
@@ -735,6 +853,58 @@ purchase.sql = `
         `;
 //The supplier is a panel that shows the suppliers of the purchased products
 export class supplier extends mypanel {
+<<<<<<< HEAD
+=======
+    static sql = `
+        with 
+            mysupplier as (
+                select
+                    #
+                    #The row index of the supplier homozone
+                    supplier.supplier as \`supplier.supplier\`,
+                    #
+                    supplier.name as \`supplier.name\`,
+                    business.title as \`business.title:supplier\`,
+                    business.tel as \`business.tel:supplier\`,
+                    business.email as \`business.email:supplier\`,
+                    business.address as \`business.address:supplier\`,
+                    supplier.pin as \`supplier.pin:supplier\`
+                from
+                    supplier
+                    left join business on supplier.business = business.business        
+            ) 
+            select 
+                image.image as \`image.image\`,
+                mysupplier.*
+            from
+                image
+                inner join receipt on receipt.image = image.image
+                left join mysupplier on receipt.supplier = mysupplier.\`supplier.supplier\`
+            `;
+    //
+    plan = [
+        //
+        //The headers. Give class names to headers to allow for easily freezing them
+        [
+            new homozone(null, { class_name: 'header' }),
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' }),
+            new homozone(null, { class_name: 'header' })
+        ],
+        //
+        //There is a reviewer on both sides of the body with a row orientation.
+        //The left one is unchecked and used for openinng a record; the right one
+        //is checked and used for writing the record
+        [
+            this.get_leftie(),
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
+            //
+            //Do not refresh the panel after writing
+            new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
+        ],
+    ];
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     //Create the constructor for the supplier panel
     constructor(parent) {
         //
@@ -788,6 +958,7 @@ export class supplier extends mypanel {
     // 4. If no data is found, leave the row unchanged.
     // This custom onblur ensures that once the user finishes editing the supplier name,
     // the system intelligently populates the rest of the row to save time and reduce errors.
+<<<<<<< HEAD
     onblur(cell, evt) {
         const _super = Object.create(null, {
             onblur: { get: () => super.onblur }
@@ -816,12 +987,41 @@ export class supplier extends mypanel {
             //3.Formulate an sql for retrieving the desired data.
             const sql = `
         SELECT
+=======
+    async onblur(cell, evt) {
+        await super.onblur(cell, evt);
+        //
+        // Step 1: Is this the cell of interest?if not, discontinue.
+        if (cell.index[1] !== 'supplier.name')
+            return;
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //2.1.Get the name of the supplier.
+        const supplier_name = cell.io?.value;
+        //
+        //If the supplier name is undefined, discontinue this process.
+        if (supplier_name === undefined)
+            return;
+        //
+        //If supplier name is null, you discontinue
+        if (supplier_name === null)
+            return;
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        const sql = `
+        SELECT 
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
             business.title as \`business.title:supplier\`,
             business.tel \`business.tel:supplier\`,
             business.email \`business.email:supplier\`,
             business.address \`business.address:supplier\`,
             supplier.pin \`supplier.pin:supplier\`
+<<<<<<< HEAD
         FROM
+=======
+        FROM 
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
             business
             inner join supplier on supplier.business= business.business
 
@@ -845,6 +1045,7 @@ export class supplier extends mypanel {
     //ref is the cell from which i lost focus.
     prefill(results, ref) {
         //
+<<<<<<< HEAD
         // 1. Get the first result (assuming one result per supplier)
         const data = results[0];
         //
@@ -855,6 +1056,33 @@ export class supplier extends mypanel {
         const parent = ref.parent;
         //
         //Go through the data keys using them as the column index to retrieve
+=======
+        //4.Execute the sql to get some result.
+        const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        //
+        //Test whether the result is empty
+        if (results.length === 0)
+            return;
+        //
+        //5.Prefill the rest of the records with the appropriate data.  
+        this.prefill(results, cell);
+    }
+    //
+    //Prefill the rest of the record with the appropriate results.
+    //ref is the cell from which i lost focus.
+    prefill(results, ref) {
+        //
+        // 1. Get the first result (assuming one result per supplier)
+        const data = results[0];
+        //
+        // 2. Access the row index of the cell
+        const row = ref.index[0];
+        //
+        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
+        const parent = ref.parent;
+        //
+        //Go through the data keys using them as the column index to retrieve 
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
@@ -986,6 +1214,72 @@ export class image_group extends panel.group {
 //The panel that shows the header of a receipt
 class receipt extends peer {
     //
+<<<<<<< HEAD
+=======
+    static sql = `select 
+        #
+        #The row index of the this homozone
+        image.image as \`image.image\`,
+        #
+        # Receipt should not be vsible
+        receipt.receipt as \`receipt.receipt\`,
+        #
+        receipt.ref as \`receipt.ref\`,
+		#
+		#The accuracy of gemini transcribing the receipt
+		receipt.accuracy,
+       
+        receipt.date as \`receipt.date\`,
+        receipt.amount as \`receipt.amount\`,
+        receipt.vat as \`receipt.vat\`,
+		receipt.vat_reg_no as \`receipt.vat_reg_no\`,
+		receipt.amount as \`receipt.vat_amount\`,
+        #etr.staff_name as \`etr.staff_name\`,
+        #etr.teller_num as \`etr.teller_num\`,
+        #etr.invoice_num as \`etr.invoice_num\`,
+        receipt.description as \`receipt.description\`
+    from
+        receipt
+        #
+        #This join is needed for linking supplier to receipt, if supplier exists
+        left join supplier on receipt.supplier = supplier.supplier
+        #
+        #Link receipt to image
+        inner join image on receipt.image = image.image
+        inner join consumer on receipt.consumer = consumer.consumer
+        left join business on consumer.business = business.business
+        left join etr on receipt.etr = etr.etr
+        left join intern on receipt.intern = intern.intern 
+    `;
+    //
+    //The receipt panel cannot create be used for creating new entries
+    //(but we can create images that intern creates receipts). There is
+    // reviewer on the right that opens up a record and another one on the right
+    //that saves saves the record. Refreshing the panel is optional 
+    plan = [
+        //
+        //The headers. Give class names to headers to allow for easily freezing them
+        [
+            new homozone(null, { class_name: 'header' }),
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' }),
+            new homozone(null, { class_name: 'header' })
+        ],
+        //
+        //There is a reviewer on both sides of the body with a row orientation.
+        //The left one is unchecked and used for openinng a reford; the right one
+        //is checked and used for writing the record
+        [
+            this.get_leftie(),
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
+            //
+            //Do not refresh the panel after writing
+            new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
+        ],
+    ];
+    //
+>>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     //The receipt panel is part of the image group; other members are file and image
     constructor(parent) {
         //
@@ -1116,6 +1410,11 @@ class image extends peer {
             //
             // add the navigation buttons
         });
+    }
+    async show() {
+        await super.show();
+        //
+        // add the navigation buttons
     }
 }
 image.sql = `
