@@ -162,7 +162,7 @@ export abstract class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider
                 #pagination in future
-                 limit 20
+                limit 200
             `;
         //
         //return the sql
@@ -1033,7 +1033,8 @@ class receipt extends peer {
         #etr.teller_num as \`etr.teller_num\`,
         #etr.invoice_num as \`etr.invoice_num\`,
         receipt.description as \`receipt.description\`,
-        receipt.validated as \`receipt.validated\`
+        receipt.validated as \`receipt.validated\`,
+        intern.name as \`intern.name\`
     from
         receipt
         #
