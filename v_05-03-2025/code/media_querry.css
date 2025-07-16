@@ -1,0 +1,104 @@
+/* Set the HTML element to take up the full height and width of the viewport,
+   ensuring that all child elements can utilize the entire available screen space. */
+html {
+    height: 100%;
+    width: 100%;
+}
+
+/* Remove default margin from all elements to ensure a consistent layout
+   across different browsers and prevent unwanted spacing issues. */
+* {
+    margin: 0;
+}
+
+/* Define the body to take up full height and width of the viewport,
+   making sure it covers the entire screen and serves as the grid container. */
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    /* Use CSS Grid for layout to create a structured, flexible design. */
+    display: grid;
+    /* Define named grid areas to allow for intuitive placement of elements. */
+    grid-template-areas:
+        'consumer receipt'
+        'file receipt'
+        'image supplier'
+        'image purchase';
+    /* Set row heights to create a balanced visual structure. */
+    grid-template-rows: 20% 20% 20% 40%;
+    /* Set column widths to split the screen into two equal halves. */
+    grid-template-columns: 50% 50%;
+}
+
+/* Apply border and hide overflow for all defined grid sections,
+   ensuring content remains within its designated space. */
+#file, #image, #consumer, #receipt, #supplier, #purchase {
+    /* Add a solid black border for clarity */
+    border: solid 1px black;
+    /* Prevent content from spilling outside its container */
+    overflow: hidden;
+}
+
+/* Assign each section to its respective grid area for correct placement. */
+#file {
+    grid-area: file;
+}
+
+#image {
+    grid-area: image;
+}
+
+#consumer {
+    grid-area: consumer;
+}
+
+#receipt {
+    grid-area: receipt;
+}
+
+#purchase {
+    grid-area: purchase;
+}
+
+#supplier {
+    grid-area: supplier;
+}
+
+/* Responsive Design for screens smaller than 768px
+   to ensure a user-friendly experience on tablets and smaller devices. */
+@media (max-width: 768px) {
+    body {
+        /* Stack sections vertically to accommodate narrower screen widths. */
+        grid-template-areas:
+            'consumer'
+            'receipt'
+            'file'
+            'image'
+            'supplier'
+            'purchase';
+        /* Adjust row sizes automatically based on content. */
+        grid-template-rows: auto;
+        /* Make each section span the full width of the screen. */
+        grid-template-columns: 100%;
+    }
+}
+
+/* Responsive Design for screens smaller than 480px
+   to ensure a better viewing experience on mobile phones. */
+@media (max-width: 480px) {
+    body {
+        /* Maintain a stacked layout for smaller screens to avoid horizontal scrolling. */
+        grid-template-areas:
+            'consumer'
+            'receipt'
+            'file'
+            'image'
+            'supplier'
+            'purchase';
+        /* Implement a single-column layout, ensuring all sections take full width. */
+        grid-template-columns: 100%;
+        /* Ensure uniform row heights by distributing space evenly. */
+        grid-template-rows: repeat(6, 1fr);
+    }
+}

@@ -1,0 +1,31 @@
+html{
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+
+}
+*{
+    margin: 0;
+    padding: 0;
+    border: 2px solid black
+}
+body{
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+        'header header'
+        'image data';
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 20% 80%;
+
+}
+.header{
+    grid-area: header;
+}
+.image{
+    grid-area: image;
+}
+.data{
+    grid-area: data;
+}

@@ -1,0 +1,50 @@
+/*
+Show the table borders*/
+td{
+    border:solid 1px  rgba(144, 214, 173, 0.964);
+    padding-right: 25px;
+}
+
+/*
+Collapse the borders of a table that are double lines*/
+table{
+    border-collapse: collapse;
+}
+
+/*
+Mark selected td and tr with different color*/
+td.selected {
+    background-color: lightblue;
+}
+tr.selected{
+    background-color:lightgoldenrodyellow;
+}
+
+/*Hide the the edit elements in normal mode*/
+td .edit{
+    display:none;
+}
+
+/*
+In updetable mode hide the normal element and show the edit vesions*/
+td.updateable .normal{
+    display:none
+}
+td.updateable .edit{
+    display:inline
+}
+
+/*
+The current cell is always shown in edit mode*/
+td.current .normal{
+    display:none;
+}
+td.current .edit{
+    display:inline;
+}
+
+/*
+Labels should be separated by a righ border margin of 1 em*/
+label{
+    margin-right: 1em;
+}

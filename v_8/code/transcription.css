@@ -1,0 +1,70 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+* {
+    margin: 0;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+        'file consumer'
+        'file receipt'
+        'image receipt'
+        'image purchase'
+        ;
+    grid-auto-columns: 1fr 1fr;
+    grid-template-rows: 1fr 2fr 2fr 6fr;
+}
+
+#file, #image, #consumer, #receipt, #purchase{
+    border: solid 1px black;
+}
+
+#file {
+    grid-area: file;
+    overflow: scroll;
+}
+
+#image {
+    grid-area: image;
+    overflow: scroll;
+}
+
+#consumer {
+    grid-area: consumer;
+  
+}
+
+#receipt {
+    grid-area: receipt;
+    overflow: scroll;
+}
+
+#purchase {
+    grid-area: purchase;
+    overflow: scroll;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+/*
+Panel headers (and lefties) are should be frozen*/
+.header{
+    /*
+    Freeze the header at the top of the view port*/
+    position:sticky;
+    top:0
+}
+.footer{
+    /*
+    Freeze the footer at the botom of the view port*/
+    position:sticky;
+    bottom:0
+}

@@ -1,0 +1,71 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+* {
+    margin: 0;
+}
+body {
+    font-size: 60px;
+    display: grid;
+    grid-template-areas:
+        "consumer"
+        "file"
+        "image"
+        "receipt"
+        "supplier"
+        "purchase";
+    grid-template-columns: 100%;
+    grid-template-rows: 10% 10% 35% 15% 10% 20%;
+}
+#file, #image, #consumer, #receipt,#supplier, #purchase{
+    border: solid 1px black;
+    overflow: scroll;
+}
+
+#file {
+    grid-area: file;
+}
+
+#image {
+    grid-area: image;
+}
+
+#consumer {
+    grid-area: consumer;
+}
+
+#receipt {
+    grid-area: receipt;
+}
+
+#purchase {
+    grid-area: purchase;
+}
+#supplier{
+    grid-area: supplier;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+/* Target all text inputs */
+input[type="text"] {
+    font-size: 60px; /* Adjust the font size */
+    padding: 10px; /* Add padding for better spacing */
+    height: 70px; /* Optional: Increase height */
+    width: 300px; /* Optional: Adjust width */
+    border: 1px solid #ccc; /* Optional: Style the border */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+/*Target all number inputs */
+input[type="number"] {
+    font-size: 50px; /* Adjust the font size */
+    padding: 10px; /* Add padding for better spacing */
+    height: 70px; /* Optional: Increase height */
+    width: 300px; /* Optional: Adjust width */
+}
+input[type="radio"] {
+    transform: scale(2);
+}

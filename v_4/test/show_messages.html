@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Transcribe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="transcribe.css">
+        <!-- JavaScript to import and call display Messages -->
+        <script type="module">
+            // Import the displayMessages function from transcribe.js
+            import { MessageDisplayer } from './messages.js';
+
+            // Call displayMessages on page load
+            window.onload = () => {
+                MessageDisplayer();
+            };
+        </script>
+
+    </head>
+    <body>
+        <div id="file">
+
+        </div>
+        <div id="button">
+            <button>PREV</button>
+            <button>NEXT</button>
+        </div>
+        <div id="image">
+
+        </div>
+        <div id="receipt">
+
+        </div>
+        <div id="purchase">
+
+        </div>
+
+    </body>
+</html>

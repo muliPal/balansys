@@ -1,74 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Add some basic styling to the table */
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Display First Image in Table</title>
+    </head>
+    <body>
+        <h1>First Image in Table</h1>
 
-    th, td {
-      border: 1px solid #dddddd;
-      padding: 8px;
-      text-align: left;
-    }
+        <!-- Table to display the image -->
+        <table id="image-table" border="1">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Image Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Image will be inserted here -->
+            </tbody>
+        </table>
 
-    th {
-      background-color: #f2f2f2;
-    }
+        <script type="module">
+            window.onload = async () => {
+                try {
+                    // Define the SQL query
+                    const sqlQuery = `
+                        SELECT
+                            CONCAT('http://localhost/balansys/images/', folder.name, '/', image.name) AS image_name,
+                            image.picture AS image_picture
+                        FROM
+                            image
+                        LEFT JOIN folder ON image.folder = folder.folder;
+                    `;
 
-    /* Hide the details row by default */
-    .details {
-      display: none;
-    }
-  </style>
-  <title>hiding rows</title>
-</head>
-<body>
+                    // Fetch data from the backend (example: POST request to your server-side script)
+                    const response = await fetch('/getImages', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({query: sqlQuery})
+                    });
 
-<table id="myTable">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Age</th>
-      <th>Country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="parent" data-id="1">
-      <td>John Doe</td>
-      <td>30</td>
-      <td>USA</td>
-    </tr>
-    <tr class="details" data-parent-id="1">
-      <td colspan="3">
-        <p><strong>Additional Information:</strong></p>
-        <p>Email: john.doe@example.com</p>
-        <p>Phone: 123-456-7890</p>
-      </td>
-    </tr>
-    <!-- Add more rows as needed -->
-  </tbody>
-</table>
+                    // Parse the response (assuming JSON data)
+                    const data = await response.json();
 
-<script>
-  // Add click event listener to each parent row
-  const parentRows = document.querySelectorAll('.parent');
-  parentRows.forEach(row => {
-    row.addEventListener('click', () => toggleDetails(row));
-  });
+                    // Display only the first image
+                    if (data.length > 0) {
+                        const firstImage = data[0]; // Get the first image object
 
-  // Function to toggle the details row
-  function toggleDetails(parentRow) {
-    const detailsRow = parentRow.nextElementSibling;
+                        // Create table row
+                        const tableBody = document.querySelector('#image-table tbody');
+                        const tr = document.createElement('tr');
 
-    // Toggle the 'details' class to show/hide the details row
-    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
-  }
-</script>
+                        // Populate the row with the image and its name
+                        tr.innerHTML = `
+                            <td><img src="${firstImage.image_name}" alt="First Image" style="width:150px;height:auto;"></td>
+                            <td>${firstImage.image_name}</td>
+                        `;
 
-</body>
+                        // Append the row to the table
+                        tableBody.appendChild(tr);
+                    } else {
+                        console.error("No images found.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching data: ", error);
+                }
+            };
+        </script>
+    </body>
 </html>

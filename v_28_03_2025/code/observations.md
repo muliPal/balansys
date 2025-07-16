@@ -1,0 +1,23 @@
+# Transcription Test Observations.
+
+- The supplier title does not accept the number of characters set in the database.
+- Double-clicking alone does not save the business title entry.
+- The first product name on purchase only takes 11 characters instead of the length set in the database.
+- There are no fields to input the ETR details in our system.
+- Clicking on an entry in the receipt table does not affect the image (coordination issue).
+- Deactivating the page works only the first time but fails for the second record.
+- The sorting on the purchase table gets disarranged.
+- Some save buttons on the receipt table are not checked even after saving (e.g., Record 361).
+- Entering two product names with the same name causes one to be replaced.
+- The supplier title does not accept the number of characters set in the database.
+- Double-clicking alone does not save the business title entry.
+- The first product name on purchase only takes 11 characters instead of the length set in the database.
+- There are no fields to input the ETR details in our system.
+- Clicking on an entry in the receipt table does not affect the image (coordination issue).
+- Deactivating the page works only the first time but fails for the second record.
+- The sorting on the purchase table gets disarranged.
+- Some save buttons on the receipt table are not checked even after saving (e.g., Record 361).
+- Entering two product names with the same name causes one to be replaced.
+- Receipt.ref is an int but it seems like it has a limit.(e.g., Record 364).
+- Some images need to be zoomed for the user to clearly see text.(e.g., Record 364).
+- The number of characters for supplier e-mail is also limited.(e.g., Record 364).

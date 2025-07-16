@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { homozone, panel } from "../../../outlook/v/zone/zone.js";
 import { mutall_error } from "../../../schema/v/code/schema.js";
 import { resizer } from "../../../resizer/v/code/resize.js";
@@ -15,6 +6,7 @@ import { authoriser } from "../../../authoriser/v/code/authoriser.js";
 //
 //A general panel purposely built for this transcription application
 class mypanel extends panel.panel {
+    sql;
     //
     //The constructor of this panel exposes assumes teh driver is of the sql type
     // and therfore exposes the the sql statement (rather than the driver)
@@ -47,82 +39,74 @@ export class peer extends mypanel {
     //If you click on a peer, the transcription image primary key changes
     //accordingly, causing all other peers to show their new selections.
     //The consumer is unaffected.
-    onclick(cell, evt) {
-        const _super = Object.create(null, {
-            onclick: { get: () => super.onclick }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Perform the action being overriden, i.e, the cell selection
-            yield _super.onclick.call(this, cell, evt);
-            //
-            //Show selection on related panels
-            //
-            //Get the new image key.
-            const image_pk = cell.index[this.orientation];
-            //
-            //Ignore this click if the image has not changed after the click (1)
-            if (image_pk === transcription.image_pk)
-                return;
-            //
-            //Update the tree view image (to support the operation just tested in (1))
-            transcription.image_pk = image_pk;
-            //
-            //Get the root view, i.e., the transcription view
-            const tv = this.search_root_view();
-            //
-            //Redraw the supplier panel
-            yield tv.supplier.show();
-            //
-            //Update the selection of the tanscription group, except the one where
-            // the click has occurred
-            tv.image_group.show_selection(cell);
-            //
-            //Re-show the purchases
-            yield tv.purchase.show();
-        });
+    async onclick(cell, evt) {
+        //
+        //Perform the action being overriden, i.e, the cell selection
+        await super.onclick(cell, evt);
+        //
+        //Show selection on related panels
+        //
+        //Get the new image key.
+        const image_pk = cell.index[this.orientation];
+        //
+        //Ignore this click if the image has not changed after the click (1)
+        if (image_pk === transcription.image_pk)
+            return;
+        //
+        //Update the tree view image (to support the operation just tested in (1))
+        transcription.image_pk = image_pk;
+        //
+        //Get the root view, i.e., the transcription view
+        const tv = this.search_root_view();
+        //
+        //Redraw the supplier panel
+        await tv.supplier.show();
+        //
+        //Update the selection of the tanscription group, except the one where
+        // the click has occurred
+        tv.image_group.show_selection(cell);
+        //
+        //Re-show the purchases
+        await tv.purchase.show();
     }
     //
     //Show the selection of this peer, by highlighting the image followed
     // by a scrolling the selected cell into view. The given cell was the one
     // clicked on. We use it to determin if this peer needs to be considered
     // for showing of selection
-    show_selection(clicked) {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Do not repaint this peer if the clicked cell comes from this zone
-            if ((clicked === null || clicked === void 0 ? void 0 : clicked.parent) === this)
-                return;
-            //
-            //Get the indexing coordinates of the cell to select
-            //
-            //Get the primary key of the image to show; its the first coordinate
-            let pk = transcription.image_pk;
-            //
-            //If the primary key is absent, then assume that this is a new consumer
-            // Set pk to be the first image in this panel. It should be shared with
-            // all the peers
-            if (pk === undefined)
-                pk = (transcription.image_pk = this.get_1st_image());
-            //
-            //Get the index of the desired cell
-            const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
-            //
-            //Get the indexed grid from the indexed cells of this homozone
-            const cell2 = (_b = (_a = this.cells_indexed) === null || _a === void 0 ? void 0 : _a[row]) === null || _b === void 0 ? void 0 : _b[col];
-            //
-            //Its an error if this cell cannot be found
-            if (!cell2)
-                throw new mutall_error(`Unable to find cell ['${row}', '${col}'] of this peer`);
-            //
-            //Select the indexed grid
-            cell2.select();
-            //
-            //Scroll the grid to the view so that the record shows at the start of
-            //the list view
-            cell2.td.scrollIntoView({ block: 'center', inline: 'center' });
-        });
+    async show_selection(clicked) {
+        //
+        //Do not repaint this peer if the clicked cell comes from this zone
+        if (clicked?.parent === this)
+            return;
+        //
+        //Get the indexing coordinates of the cell to select
+        //
+        //Get the primary key of the image to show; its the first coordinate
+        let pk = transcription.image_pk;
+        //
+        //If the primary key is absent, then assume that this is a new consumer
+        // Set pk to be the first image in this panel. It should be shared with
+        // all the peers
+        if (pk === undefined)
+            pk = (transcription.image_pk = this.get_1st_image());
+        //
+        //Get the index of the desired cell
+        const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
+        //
+        //Get the indexed grid from the indexed cells of this homozone
+        const cell2 = this.cells_indexed?.[row]?.[col];
+        //
+        //Its an error if this cell cannot be found
+        if (!cell2)
+            throw new mutall_error(`Unable to find cell ['${row}', '${col}'] of this peer`);
+        //
+        //Select the indexed grid
+        cell2.select();
+        //
+        //Scroll the grid to the view so that the record shows at the start of
+        //the list view
+        cell2.td.scrollIntoView({ block: 'center', inline: 'center' });
     }
     //Returns the primary key of the first record in this panel
     get_1st_image() {
@@ -154,11 +138,7 @@ export class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider
                 #pagination in future
-<<<<<<< HEAD
-                 #limit 20
-=======
-                 limit 20
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
+                limit 200
             `;
         //
         //return the sql
@@ -168,6 +148,39 @@ export class peer extends mypanel {
 //
 //Transcription is the page that helps us to digitize images of physical receipts
 export class transcription extends panel.group {
+    parent;
+    resizer;
+    authoriser = new authoriser();
+    //
+    // Add the authoriser
+    // public authoriser=new authoriser(this,'#launch')
+    //
+    image_group;
+    purchase;
+    consumer;
+    supplier;
+    //
+    //Set the initial display condition manually set at 3, 300, meaning the 300th
+    // image of the 3rd consumer. This number changes on clicking a peer or
+    // consumer pannel. Display is defined as static so that we can access it
+    // from any where, i.e., without following the view has-a hierarchy.
+    static Initial_display = { consumer: 2, image: 0 };
+    //
+    //The following properties are used to control the display of the transcription
+    //and need to be accessed from may places. They are defined as static to support
+    //this requirement.
+    //
+    //This represents the image that generally controls what we see in
+    // the peer panels and the purchases
+    static image_pk;
+    //
+    //The current consumer primary key
+    static consumer_pk;
+    //
+    zoom = 1;
+    rotation = 0;
+    translateX = 0;
+    translateY = 0;
     constructor(
     //
     //To implement the view has-a hierarchy
@@ -179,12 +192,6 @@ export class transcription extends panel.group {
         //Use an empty list to create the group
         super([], parent, options);
         this.parent = parent;
-        this.authoriser = new authoriser();
-        //
-        this.zoom = 1;
-        this.rotation = 0;
-        this.translateX = 0;
-        this.translateY = 0;
         //
         //NB. Suplier is not a direct ember of the transcription
         this.supplier = new supplier(this);
@@ -198,26 +205,13 @@ export class transcription extends panel.group {
     }
     //
     // the show method
-<<<<<<< HEAD
-    show() {
-        const _super = Object.create(null, {
-            show: { get: () => super.show }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super.show.call(this);
-            this.resizer = new resizer(document.body, {
-                min_panel_size: 25,
-                threshold: 5,
-            });
-            this.authoriser.launch_with_button('#login');
-=======
     async show() {
         await super.show();
         this.resizer = new resizer(document.body, {
             min_panel_size: 25,
             threshold: 5,
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
         });
+        this.authoriser.launch_with_button('#login');
     }
     //
     //Zoom in to the selected image group member
@@ -283,24 +277,21 @@ export class transcription extends panel.group {
         image.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.zoom}) rotate(${this.rotation}deg)`;
     }
     //Complete the construction of a page by running asynchronous methods
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Get the relative consumer and image display positions
-            const { consumer, image } = transcription.Initial_display;
-            //
-            //Initialize the consumer and image primary keys
-            transcription.consumer_pk = yield this.get_consumer_pk(consumer);
-            transcription.image_pk = yield this.get_initial_image_pk(image);
-        });
+    async init() {
+        //
+        //Get the relative consumer and image display positions
+        const { consumer, image } = transcription.Initial_display;
+        //
+        //Initialize the consumer and image primary keys
+        transcription.consumer_pk = await this.get_consumer_pk(consumer);
+        transcription.image_pk = await this.get_initial_image_pk(image);
     }
     //
     //Returns the primary key of the initial image to scroll to.
-    get_initial_image_pk(i) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Formulate the sql to retrieve only the i'th image
-            const sql = `
+    async get_initial_image_pk(i) {
+        //
+        //Formulate the sql to retrieve only the i'th image
+        const sql = `
             select
                 image.image
             from
@@ -312,51 +303,76 @@ export class transcription extends panel.group {
             limit 1
             offset ${i}
         `;
-            //
-            //Run the query
-            const result = yield this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
-            //
-            //Return undedined if no image was found
-            if (result.length === 0)
-                return undefined;
-            //
-            //Extract and return the resulting string
-            return String(result[0].image);
-        });
+        //
+        //Run the query
+        const result = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        //
+        //Return undedined if no image was found
+        if (result.length === 0)
+            return undefined;
+        //
+        //Extract and return the resulting string
+        return String(result[0].image);
     }
     //Initialize the consumer primary key, using the display setting
-    get_consumer_pk(i) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Formulate the sql to retrieve only the i'th consumer
-            const sql = `
+    async get_consumer_pk(i) {
+        //
+        //Formulate the sql to retrieve only the i'th consumer
+        const sql = `
             select
                 consumer
             from
                 consumer
             order by consumer
             limit 1 offset ${i}`;
-            //
-            //Run the query
-            const result = yield this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
-            //
-            //If there are not consumers return undefined
-            if (result.length === 0)
-                undefined;
-            //
-            //Extract and return the resulting string
-            return String(result[0].consumer);
-        });
+        //
+        //Run the query
+        const result = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
+        //
+        //If there are not consumers return undefined
+        if (result.length === 0)
+            undefined;
+        //
+        //Extract and return the resulting string
+        return String(result[0].consumer);
     }
 }
-//
-//Set the initial display condition manually set at 3, 300, meaning the 300th
-// image of the 3rd consumer. This number changes on clicking a peer or
-// consumer pannel. Display is defined as static so that we can access it
-// from any where, i.e., without following the view has-a hierarchy.
-transcription.Initial_display = { consumer: 2, image: 0 };
 //The panel that shows the owners/consumers of thses receipts
 export class consumer extends mypanel {
+    //
+    //Save the display settings here.The map indexing key is the consumer primary
+    //key. The indexed string is the image primary key. NB. A map is used as it
+    //does not break down if you retrieve a non existing key. The structure
+    //{[index:number]:number}, I think, would throw an exception, similar to
+    //how array indexing behaves. Investigate this assumption
+    displays = new Map();
+    //
+    //The creator subpanel has this consumer as the homozone; its a margin oriented
+    // columnwise
+    creator = new panel.creator(this, 1);
+    //The plan of an image is a standard panel with ability to create new
+    //images
+    plan = [
+        //
+        //The headers
+        [new homozone(), this.get_header(), new homozone()],
+        //
+        //The left reviewer is unchecked and will open the record if checked; the
+        // right review is already checked and will be used for wriring the record
+        [
+            new panel.reviewer(this, 0, false, 'open'),
+            this,
+            new panel.reviewer(this, 0, true, 'write')
+        ],
+        //
+        //The record create functionality. The only reviewer on the right is unchecked
+        // will write the record if checked
+        [
+            new homozone(),
+            this.creator,
+            new panel.reviewer(this.creator, 0, false, 'write')
+        ],
+    ];
     //
     constructor(parent) {
         //
@@ -399,40 +415,6 @@ export class consumer extends mypanel {
         };
         //
         super(sql, 'consumer.consumer', '#consumer', options, parent);
-        //
-        //Save the display settings here.The map indexing key is the consumer primary
-        //key. The indexed string is the image primary key. NB. A map is used as it
-        //does not break down if you retrieve a non existing key. The structure
-        //{[index:number]:number}, I think, would throw an exception, similar to
-        //how array indexing behaves. Investigate this assumption
-        this.displays = new Map();
-        //
-        //The creator subpanel has this consumer as the homozone; its a margin oriented
-        // columnwise
-        this.creator = new panel.creator(this, 1);
-        //The plan of an image is a standard panel with ability to create new
-        //images
-        this.plan = [
-            //
-            //The headers
-            [new homozone(), this.get_header(), new homozone()],
-            //
-            //The left reviewer is unchecked and will open the record if checked; the
-            // right review is already checked and will be used for wriring the record
-            [
-                new panel.reviewer(this, 0, false, 'open'),
-                this,
-                new panel.reviewer(this, 0, true, 'write')
-            ],
-            //
-            //The record create functionality. The only reviewer on the right is unchecked
-            // will write the record if checked
-            [
-                new homozone(),
-                this.creator,
-                new panel.reviewer(this.creator, 0, false, 'write')
-            ],
-        ];
     }
     //
     //For a consumer, the sql is independent of any other panel. It never changes
@@ -440,29 +422,26 @@ export class consumer extends mypanel {
     get_modified_driver_sql() { return; }
     //
     //Show the selected consumer, guided by display settings of the transcription
-    show_selection() {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Do not show any  consumer selection if there is no consumer primary key
-            const pk = transcription.consumer_pk;
-            if (!pk)
-                return;
-            //
-            //Get the column index of the desired cell; it is the same one used for
-            //displaying a selection
-            const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
-            //
-            //Get the indexed grid from the indexed cells of this homozone
-            const cell = (_b = (_a = this.cells_indexed) === null || _a === void 0 ? void 0 : _a[row]) === null || _b === void 0 ? void 0 : _b[col];
-            //
-            //It is an error if there is no cell at this coordinate
-            if (!cell)
-                throw new mutall_error(`No cell is found at coordinate [${row} ${col}] of consumer`);
-            //
-            //Now select the grid as a cell
-            cell.select();
-        });
+    async show_selection() {
+        //
+        //Do not show any  consumer selection if there is no consumer primary key
+        const pk = transcription.consumer_pk;
+        if (!pk)
+            return;
+        //
+        //Get the column index of the desired cell; it is the same one used for
+        //displaying a selection
+        const [row, col] = this.orientate([pk, this.orientation], this.selection_cname);
+        //
+        //Get the indexed grid from the indexed cells of this homozone
+        const cell = this.cells_indexed?.[row]?.[col];
+        //
+        //It is an error if there is no cell at this coordinate
+        if (!cell)
+            throw new mutall_error(`No cell is found at coordinate [${row} ${col}] of consumer`);
+        //
+        //Now select the grid as a cell
+        cell.select();
     }
     //
     // Override the default homozone click behavior to enable actions beyond
@@ -471,42 +450,38 @@ export class consumer extends mypanel {
     // version associated with that consumer. This requires tracking the last
     // image for each consumer. If no previous image exists, the default
     // assumption is that the last image is at relative position 0.
-    onclick(cell, evt) {
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Carry out the default behaviour of selecting the cell
-            cell.select();
-            //
-            //Extend the cell selection so that the rest of the trancription
-            // page is refreshed to match the new consumer (primary key)
-            //
-            //Set the consumer primary key to match the current cell selection;
-            // that depends on this consumer's orientation
-            transcription.consumer_pk = cell.index[this.orientation];
-            //
-            //Get the last image primary key for this consumer.
-            transcription.image_pk = this.displays.get(transcription.consumer_pk);
-            //
-            //Get the transcription view; its the root view of this app
-            const trans = this.search_root_view();
-            //
-            //Show the transcription group members only, i.e., its not a complete
-            //transcription show
-            yield trans.image_group.show();
-            //
-            //Show the transcription purchases
-            yield trans.purchase.show();
-        });
+    async onclick(cell, evt) {
+        //
+        //Carry out the default behaviour of selecting the cell
+        cell.select();
+        //
+        //Extend the cell selection so that the rest of the trancription
+        // page is refreshed to match the new consumer (primary key)
+        //
+        //Set the consumer primary key to match the current cell selection;
+        // that depends on this consumer's orientation
+        transcription.consumer_pk = cell.index[this.orientation];
+        //
+        //Get the last image primary key for this consumer.
+        transcription.image_pk = this.displays.get(transcription.consumer_pk);
+        //
+        //Get the transcription view; its the root view of this app
+        const trans = this.search_root_view();
+        //
+        //Show the transcription group members only, i.e., its not a complete
+        //transcription show
+        await trans.image_group.show();
+        //
+        //Show the transcription purchases
+        await trans.purchase.show();
     }
 }
 //The panel that shows the details of the purchased items on a receipt
 class purchase extends mypanel {
     //
-<<<<<<< HEAD
-=======
     //Define an sql for retrieving purchases unconditionally
     static sql = `
-        select 
+        select
                 #
                 #The row index of the this homozone
                 purchase.purchase as \`purchase.purchase\`,
@@ -558,7 +533,6 @@ class purchase extends mypanel {
         ],
     ];
     //
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     constructor(parent) {
         //
         const options = {
@@ -581,75 +555,10 @@ class purchase extends mypanel {
         };
         //
         super(purchase.sql, 'purchase.purchase', '#purchase', options, parent);
-        //
-        //The creator sub panel
-        //
-        //Set the options to cause the onblur event to be raised on the creator.
-        //let options:table_options ;
-        //creator = new panel.creator(this, 1, options );
-        this.creator = new panel.creator(this, 1);
-        //
-        //The plan of a purchase allows us to create and review purchase.
-        this.plan = [
-            //
-            //The headers for purchase should be styled as frozen
-            [
-                new homozone(null, { class_name: 'header' }),
-                this.get_header({ class_name: 'header' }),
-                new homozone(null, { class_name: 'header' })
-            ],
-            //
-            //There is a review on both sides of the body with a row orientation
-            [
-                new panel.reviewer(this, 0, false, 'open'),
-                this,
-                new panel.reviewer(this, 0, true, 'write')
-            ],
-            //
-            //The creator
-            [
-                new homozone(null),
-                this.creator,
-                new panel.reviewer(this.creator, 0, false, 'write')
-            ],
-        ];
     }
     //
     //Here i implement onblur prefill using 'code' as my condition.
-<<<<<<< HEAD
     //If there is a similar code in the database, then i prefil the rest of the row with
-    //the appropriate data
-    onblur(cell, evt) {
-        const _super = Object.create(null, {
-            onblur: { get: () => super.onblur }
-        });
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super.onblur.call(this, cell, evt);
-            console.log('cell.value?.io');
-            //
-            // Step 1: Is this the cell of interest?if not, discontinue.
-            if (cell.index[1] !== 'code')
-                return;
-            //
-            //2.The cell is of interest, use it to prefill the rest of the records.
-            //
-            //2.1.Get the code
-            const code = (_a = cell.io) === null || _a === void 0 ? void 0 : _a.value;
-            //
-            //If the code is undefined, discontinue this process.
-            if (code === undefined)
-                return;
-            //
-            //If code is null, you discontinue
-            if (code === null)
-                return;
-            //
-            //3.Formulate an sql for retrieving the desired data.
-            const sql = `
-        select
-=======
-    //If there is a similar code in the database, then i prefil the rest of the row with 
     //the appropriate data
     async onblur(cell, evt) {
         await super.onblur(cell, evt);
@@ -674,8 +583,7 @@ class purchase extends mypanel {
         //
         //3.Formulate an sql for retrieving the desired data.
         const sql = `
-        select 
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
+        select
                 purchase.ref as ref,
                 product.code as code,
                 product.name as \`product.name\`,
@@ -685,23 +593,7 @@ class purchase extends mypanel {
             from
                 purchase
                 inner join product on purchase.product=product.product
-<<<<<<< HEAD
         WHERE
-           code = '${code}'
-        `;
-            //
-            //4.Execute the sql to get some result.
-            const results = yield this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
-            //
-            //Test whether the result is empty
-            if (results.length === 0)
-                return;
-            //
-            //5.Prefill the rest of the records with the appropriate data.
-            this.prefill(results, cell);
-        });
-=======
-        WHERE 
            code = '${code}'
         `;
         //
@@ -712,9 +604,8 @@ class purchase extends mypanel {
         if (results.length === 0)
             return;
         //
-        //5.Prefill the rest of the records with the appropriate data.  
+        //5.Prefill the rest of the records with the appropriate data.
         this.prefill(results, cell);
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     }
     //
     //Prefill the rest of the record with the appropriate results.
@@ -730,11 +621,7 @@ class purchase extends mypanel {
         //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
         const parent = ref.parent;
         //
-<<<<<<< HEAD
         //Go through the data keys using them as the column index to retrieve
-=======
-        //Go through the data keys using them as the column index to retrieve 
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
@@ -763,19 +650,14 @@ class purchase extends mypanel {
     }
     //Override the default show panel behavior so that if no image is available
     //the panel is not shown
-    show() {
-        const _super = Object.create(null, {
-            show: { get: () => super.show }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //If there is no image, do not show the purchases
-            if (!transcription.image_pk)
-                return;
-            //
-            //Show the default panel
-            yield _super.show.call(this);
-        });
+    async show() {
+        //
+        //If there is no image, do not show the purchases
+        if (!transcription.image_pk)
+            return;
+        //
+        //Show the default panel
+        await super.show();
     }
     //Modify the sql of the purchase panel so that the display reflects the
     //current image of the transcription view
@@ -800,63 +682,36 @@ class purchase extends mypanel {
     //
     //Show the last (edit) row for a purchase selection. NB. Purchases are not
     //transposed
-    show_selection() {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Get the mark of the last tick in the row dimension as the row index
-            const ticks = this.axes[this.orientation].ticks;
-            //
-            //If there are no purchases, then nothing can be selected
-            if (ticks.length === 0)
-                return;
-            //
-            //Get the last row
-            const row = ticks[ticks.length - 1].mark;
-            //
-            //The column index is the one one used for selection
-            const col = this.selection_cname;
-            //
-            //Get the indexed cell from the indexed cells of this homozone
-            const cell = (_b = (_a = this.cells_indexed) === null || _a === void 0 ? void 0 : _a[row]) === null || _b === void 0 ? void 0 : _b[col];
-            //
-            //It is an error if there is no cell at this coordinate
-            if (!cell)
-                throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
-            //
-            //Select the cell
-            cell.select();
-        });
+    async show_selection() {
+        //
+        //Get the mark of the last tick in the row dimension as the row index
+        const ticks = this.axes[this.orientation].ticks;
+        //
+        //If there are no purchases, then nothing can be selected
+        if (ticks.length === 0)
+            return;
+        //
+        //Get the last row
+        const row = ticks[ticks.length - 1].mark;
+        //
+        //The column index is the one one used for selection
+        const col = this.selection_cname;
+        //
+        //Get the indexed cell from the indexed cells of this homozone
+        const cell = this.cells_indexed?.[row]?.[col];
+        //
+        //It is an error if there is no cell at this coordinate
+        if (!cell)
+            throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
+        //
+        //Select the cell
+        cell.select();
     }
 }
-//
-//Define an sql for retrieving purchases unconditionally
-purchase.sql = `
-        select
-                #
-                #The row index of the this homozone
-                purchase.purchase as \`purchase.purchase\`,
-                #
-                purchase.ref as ref,
-                product.code as code,
-                product.name as \`product.name\`,
-                purchase.qty as qty,
-                purchase.unit as unit,
-                purchase.price as price
-            from
-                purchase
-                #
-                #Link purchase to image
-                inner join receipt on purchase.receipt = receipt.receipt
-                inner join image on receipt.image = image.image
-                inner join product on purchase.product=product.product
-        `;
 //The supplier is a panel that shows the suppliers of the purchased products
 export class supplier extends mypanel {
-<<<<<<< HEAD
-=======
     static sql = `
-        with 
+        with
             mysupplier as (
                 select
                     #
@@ -871,9 +726,9 @@ export class supplier extends mypanel {
                     supplier.pin as \`supplier.pin:supplier\`
                 from
                     supplier
-                    left join business on supplier.business = business.business        
-            ) 
-            select 
+                    left join business on supplier.business = business.business
+            )
+            select
                 image.image as \`image.image\`,
                 mysupplier.*
             from
@@ -904,7 +759,6 @@ export class supplier extends mypanel {
             new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
         ],
     ];
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     //Create the constructor for the supplier panel
     constructor(parent) {
         //
@@ -925,29 +779,6 @@ export class supplier extends mypanel {
         };
         //
         super(supplier.sql, row_index_cname, '#supplier', options, parent);
-        //
-        this.plan = [
-            //
-            //The headers. Give class names to headers to allow for easily freezing them
-            [
-                new homozone(null, { class_name: 'header' }),
-                new homozone(null, { class_name: 'header' }),
-                this.get_header({ class_name: 'header' }),
-                new homozone(null, { class_name: 'header' })
-            ],
-            //
-            //There is a reviewer on both sides of the body with a row orientation.
-            //The left one is unchecked and used for openinng a record; the right one
-            //is checked and used for writing the record
-            [
-                this.get_leftie(),
-                new panel.reviewer(this, 0, false, 'open'),
-                this,
-                //
-                //Do not refresh the panel after writing
-                new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
-            ],
-        ];
     }
     //
     // Here, I override the default onblur event to implement custom behavior:
@@ -958,36 +789,6 @@ export class supplier extends mypanel {
     // 4. If no data is found, leave the row unchanged.
     // This custom onblur ensures that once the user finishes editing the supplier name,
     // the system intelligently populates the rest of the row to save time and reduce errors.
-<<<<<<< HEAD
-    onblur(cell, evt) {
-        const _super = Object.create(null, {
-            onblur: { get: () => super.onblur }
-        });
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super.onblur.call(this, cell, evt);
-            //
-            // Step 1: Is this the cell of interest?if not, discontinue.
-            if (cell.index[1] !== 'supplier.name')
-                return;
-            //
-            //2.The cell is of interest, use it to prefill the rest of the records.
-            //
-            //2.1.Get the name of the supplier.
-            const supplier_name = (_a = cell.io) === null || _a === void 0 ? void 0 : _a.value;
-            //
-            //If the supplier name is undefined, discontinue this process.
-            if (supplier_name === undefined)
-                return;
-            //
-            //If supplier name is null, you discontinue
-            if (supplier_name === null)
-                return;
-            //
-            //3.Formulate an sql for retrieving the desired data.
-            const sql = `
-        SELECT
-=======
     async onblur(cell, evt) {
         await super.onblur(cell, evt);
         //
@@ -1010,53 +811,20 @@ export class supplier extends mypanel {
         //
         //3.Formulate an sql for retrieving the desired data.
         const sql = `
-        SELECT 
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
+        SELECT
             business.title as \`business.title:supplier\`,
             business.tel \`business.tel:supplier\`,
             business.email \`business.email:supplier\`,
             business.address \`business.address:supplier\`,
             supplier.pin \`supplier.pin:supplier\`
-<<<<<<< HEAD
         FROM
-=======
-        FROM 
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
             business
             inner join supplier on supplier.business= business.business
 
         WHERE
            supplier.name = '${supplier_name}'
         `;
-            //
-            //4.Execute the sql to get some result.
-            const results = yield this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
-            //
-            //Test whether the result is empty
-            if (results.length === 0)
-                return;
-            //
-            //5.Prefill the rest of the records with the appropriate data.
-            this.prefill(results, cell);
-        });
-    }
-    //
-    //Prefill the rest of the record with the appropriate results.
-    //ref is the cell from which i lost focus.
-    prefill(results, ref) {
         //
-<<<<<<< HEAD
-        // 1. Get the first result (assuming one result per supplier)
-        const data = results[0];
-        //
-        // 2. Access the row index of the cell
-        const row = ref.index[0];
-        //
-        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
-        const parent = ref.parent;
-        //
-        //Go through the data keys using them as the column index to retrieve
-=======
         //4.Execute the sql to get some result.
         const results = await this.exec_php('database', ['balansys', false], 'get_sql_data', [sql]);
         //
@@ -1064,7 +832,7 @@ export class supplier extends mypanel {
         if (results.length === 0)
             return;
         //
-        //5.Prefill the rest of the records with the appropriate data.  
+        //5.Prefill the rest of the records with the appropriate data.
         this.prefill(results, cell);
     }
     //
@@ -1081,8 +849,7 @@ export class supplier extends mypanel {
         //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
         const parent = ref.parent;
         //
-        //Go through the data keys using them as the column index to retrieve 
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
+        //Go through the data keys using them as the column index to retrieve
         // and fill the corresponding cell
         //
         //Ensure the parent has cells indexed.
@@ -1111,37 +878,34 @@ export class supplier extends mypanel {
     }
     //
     //Show the first/only row for a consumer selection.
-    show_selection() {
-        var _a, _b;
-        return __awaiter(this, void 0, void 0, function* () {
-            //
-            //Get the mark of the first tick in the row dimension as the row index
-            //
-            const ticks = this.axes[this.orientation].ticks;
-            //
-            //If there are no purchases, then nothing can be selected
-            if (ticks.length === 0)
-                return;
-            //
-            //Get the first row index
-            const x = ticks[0].mark;
-            //
-            //The 2nd index is the name of the column used for selection
-            const y = this.selection_cname;
-            //
-            //Use the zone's orientation to determine the row and colum indices
-            const [row, col] = this.orientate([x, this.orientation], y);
-            //
-            //Get the indexed cell from the indexed cells of this homozone
-            const cell = (_b = (_a = this.cells_indexed) === null || _a === void 0 ? void 0 : _a[row]) === null || _b === void 0 ? void 0 : _b[col];
-            //
-            //It is an error if there is no cell at this coordinate
-            if (!cell)
-                throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
-            //
-            //Select the cell
-            cell.select();
-        });
+    async show_selection() {
+        //
+        //Get the mark of the first tick in the row dimension as the row index
+        //
+        const ticks = this.axes[this.orientation].ticks;
+        //
+        //If there are no purchases, then nothing can be selected
+        if (ticks.length === 0)
+            return;
+        //
+        //Get the first row index
+        const x = ticks[0].mark;
+        //
+        //The 2nd index is the name of the column used for selection
+        const y = this.selection_cname;
+        //
+        //Use the zone's orientation to determine the row and colum indices
+        const [row, col] = this.orientate([x, this.orientation], y);
+        //
+        //Get the indexed cell from the indexed cells of this homozone
+        const cell = this.cells_indexed?.[row]?.[col];
+        //
+        //It is an error if there is no cell at this coordinate
+        if (!cell)
+            throw new mutall_error(`No cell is found at coordinate [${row}, ${col}]`);
+        //
+        //Select the cell
+        cell.select();
     }
     //Modify the sql of the purchase panel so that the display reflects the
     //current image of the transcription view
@@ -1161,35 +925,13 @@ export class supplier extends mypanel {
         return sql;
     }
 }
-supplier.sql = `
-        with
-            mysupplier as (
-                select
-                    #
-                    #The row index of the supplier homozone
-                    supplier.supplier as \`supplier.supplier\`,
-                    #
-                    supplier.name as \`supplier.name\`,
-                    business.title as \`business.title:supplier\`,
-                    business.tel as \`business.tel:supplier\`,
-                    business.email as \`business.email:supplier\`,
-                    business.address as \`business.address:supplier\`,
-                    supplier.pin as \`supplier.pin:supplier\`
-                from
-                    supplier
-                    left join business on supplier.business = business.business
-            )
-            select
-                image.image as \`image.image\`,
-                mysupplier.*
-            from
-                image
-                inner join receipt on receipt.image = image.image
-                left join mysupplier on receipt.supplier = mysupplier.\`supplier.supplier\`
-            `;
 //
 //
 export class image_group extends panel.group {
+    //
+    //The members of the image group share the same column name for row
+    // indexing
+    row_index_cname = 'image.image';
     //
     constructor(
     //
@@ -1197,10 +939,6 @@ export class image_group extends panel.group {
         //
         //Crratting the group with no members.
         super([], parent);
-        //
-        //The members of the image group share the same column name for row
-        // indexing
-        this.row_index_cname = 'image.image';
         //
         //Creating the members using the created group
         this.members = [
@@ -1214,9 +952,7 @@ export class image_group extends panel.group {
 //The panel that shows the header of a receipt
 class receipt extends peer {
     //
-<<<<<<< HEAD
-=======
-    static sql = `select 
+    static sql = `select
         #
         #The row index of the this homozone
         image.image as \`image.image\`,
@@ -1228,7 +964,7 @@ class receipt extends peer {
 		#
 		#The accuracy of gemini transcribing the receipt
 		receipt.accuracy,
-       
+
         receipt.date as \`receipt.date\`,
         receipt.amount as \`receipt.amount\`,
         receipt.vat as \`receipt.vat\`,
@@ -1237,7 +973,9 @@ class receipt extends peer {
         #etr.staff_name as \`etr.staff_name\`,
         #etr.teller_num as \`etr.teller_num\`,
         #etr.invoice_num as \`etr.invoice_num\`,
-        receipt.description as \`receipt.description\`
+        receipt.observation as \`receipt.observation\`,
+        receipt.validated as \`receipt.validated\`,
+        intern.name as \`intern.name\`
     from
         receipt
         #
@@ -1249,13 +987,13 @@ class receipt extends peer {
         inner join consumer on receipt.consumer = consumer.consumer
         left join business on consumer.business = business.business
         left join etr on receipt.etr = etr.etr
-        left join intern on receipt.intern = intern.intern 
+        left join intern on receipt.intern = intern.intern
     `;
     //
     //The receipt panel cannot create be used for creating new entries
     //(but we can create images that intern creates receipts). There is
     // reviewer on the right that opens up a record and another one on the right
-    //that saves saves the record. Refreshing the panel is optional 
+    //that saves saves the record. Refreshing the panel is optional
     plan = [
         //
         //The headers. Give class names to headers to allow for easily freezing them
@@ -1279,7 +1017,6 @@ class receipt extends peer {
         ],
     ];
     //
->>>>>>> 72316bc26028da153f219f4148eb33f2b8bdc0f7
     //The receipt panel is part of the image group; other members are file and image
     constructor(parent) {
         //
@@ -1301,77 +1038,43 @@ class receipt extends peer {
                 //
                 //Supplier name is the same as the business name
                 ['supplier.name', {}, [undefined, 'business', 'name']],
+                //
+                // Display a checkbox for marking whether a receipt is validated.
+                ['receipt.validated', { type: 'checkbox', label: '✓' }],
             ],
         };
         //
         super(receipt.sql, 'image.image', '#receipt', options, parent);
-        //
-        //The receipt panel cannot create be used for creating new entries
-        //(but we can create images that intern creates receipts). There is
-        // reviewer on the right that opens up a record and another one on the right
-        //that saves saves the record. Refreshing the panel is optional
-        this.plan = [
-            //
-            //The headers. Give class names to headers to allow for easily freezing them
-            [
-                new homozone(null, { class_name: 'header' }),
-                new homozone(null, { class_name: 'header' }),
-                this.get_header({ class_name: 'header' }),
-                new homozone(null, { class_name: 'header' })
-            ],
-            //
-            //There is a reviewer on both sides of the body with a row orientation.
-            //The left one is unchecked and used for openinng a reford; the right one
-            //is checked and used for writing the record
-            [
-                this.get_leftie(),
-                new panel.reviewer(this, 0, false, 'open'),
-                this,
-                //
-                //Do not refresh the panel after writing
-                new panel.reviewer(this, 0, true, 'write', { refresh_after_write: false })
-            ],
-        ];
     }
 }
-//
-receipt.sql = `select
-        #
-        #The row index of the this homozone
-        image.image as \`image.image\`,
-        #
-        # Receipt should not be vsible
-        receipt.receipt as \`receipt.receipt\`,
-        #
-        receipt.ref as \`receipt.ref\`,
-		#
-		#The accuracy of gemini transcribing the receipt
-		receipt.accuracy,
-
-        receipt.date as \`receipt.date\`,
-        receipt.amount as \`receipt.amount\`,
-        receipt.vat as \`receipt.vat\`,
-		receipt.vat_reg_no as \`receipt.vat_reg_no\`,
-		receipt.amount as \`receipt.vat_amount\`,
-        #etr.staff_name as \`etr.staff_name\`,
-        #etr.teller_num as \`etr.teller_num\`,
-        #etr.invoice_num as \`etr.invoice_num\`,
-        receipt.description as \`receipt.description\`
-    from
-        receipt
-        #
-        #This join is needed for linking supplier to receipt, if supplier exists
-        left join supplier on receipt.supplier = supplier.supplier
-        #
-        #Link receipt to image
-        inner join image on receipt.image = image.image
-        inner join consumer on receipt.consumer = consumer.consumer
-        left join business on consumer.business = business.business
-        left join etr on receipt.etr = etr.etr
-        left join intern on receipt.intern = intern.intern
-    `;
 //The panel that shows the actual scanned images of receipts
 class image extends peer {
+    static sql = `
+            select
+                #
+                #The row index of the file homozone
+                image.image as \`image.image\`,
+                #
+                #Construct the image column fit for driving href in an img element
+                concat_ws('/', '/balansys/images', folder.full_name, image.short_name) as image
+            from
+                image
+                inner join folder on image.folder = folder.folder
+                inner join receipt on receipt.image = image.image
+                inner join consumer on receipt.consumer = consumer.consumer
+            `;
+    //The plan of an image is a standard panel with ability to create new
+    //images
+    plan = [
+        //
+        //The headers
+        [new homozone(null), this.get_header()],
+        //
+        [this.get_leftie(), this],
+        //
+        //The record create functionality
+        [new homozone(null), new panel.creator(this, 1)],
+    ];
     //
     //The image panel is part of the image group; other members are file and receipt
     constructor(parent) {
@@ -1388,28 +1091,6 @@ class image extends peer {
         };
         //
         super(image.sql, 'image.image', '#image', options, parent);
-        //The plan of an image is a standard panel with ability to create new
-        //images
-        this.plan = [
-            //
-            //The headers
-            [new homozone(null), this.get_header()],
-            //
-            [this.get_leftie(), this],
-            //
-            //The record create functionality
-            [new homozone(null), new panel.creator(this, 1)],
-        ];
-    }
-    show() {
-        const _super = Object.create(null, {
-            show: { get: () => super.show }
-        });
-        return __awaiter(this, void 0, void 0, function* () {
-            yield _super.show.call(this);
-            //
-            // add the navigation buttons
-        });
     }
     async show() {
         await super.show();
@@ -1417,22 +1098,37 @@ class image extends peer {
         // add the navigation buttons
     }
 }
-image.sql = `
+//The panel that shows the scanned image files
+class file extends peer {
+    //
+    //
+    static sql = `
             select
                 #
-                #The row index of the file homozone
+                #The row index of the image homozone
                 image.image as \`image.image\`,
+                consumer.name,
                 #
-                #Construct the image column fit for driving href in an img element
-                concat_ws('/', '/balansys/images', folder.full_name, image.short_name) as image
+                concat(folder.full_name, "/", image.short_name) as \`path\`
             from
                 image
                 inner join folder on image.folder = folder.folder
                 inner join receipt on receipt.image = image.image
                 inner join consumer on receipt.consumer = consumer.consumer
-            `;
-//The panel that shows the scanned image files
-class file extends peer {
+           `;
+    //
+    //The plan of an image is a standard panel (without ability to create new
+    //or update files)
+    plan = [
+        //
+        //The headers should be styled as flozen
+        [
+            new homozone(null, { class_name: 'header' }),
+            this.get_header({ class_name: 'header' })
+        ],
+        //
+        [this.get_leftie(), this],
+    ];
     //
     //The file panel is part of the image group; other members are receipt and image
     constructor(parent) {
@@ -1448,34 +1144,5 @@ class file extends peer {
         };
         //
         super(file.sql, 'image.image', '#file', options, parent);
-        //
-        //The plan of an image is a standard panel (without ability to create new
-        //or update files)
-        this.plan = [
-            //
-            //The headers should be styled as flozen
-            [
-                new homozone(null, { class_name: 'header' }),
-                this.get_header({ class_name: 'header' })
-            ],
-            //
-            [this.get_leftie(), this],
-        ];
     }
 }
-//
-//
-file.sql = `
-            select
-                #
-                #The row index of the image homozone
-                image.image as \`image.image\`,
-                consumer.name,
-                #
-                concat(folder.full_name, "/", image.short_name) as \`path\`
-            from
-                image
-                inner join folder on image.folder = folder.folder
-                inner join receipt on receipt.image = image.image
-                inner join consumer on receipt.consumer = consumer.consumer
-           `;

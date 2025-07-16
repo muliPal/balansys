@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Transcribe</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="transcribe.css">
+        <script type="module">
+            import { initializePage } from './transcribe.js';
+
+            // Call initializePage on page load
+            window.onload = () => {
+                initializePage();
+            };
+        </script>
+    </head>
+    <body>
+        <div id="file"></div>
+        <div id="navigate">
+            <button id="prevBtn">Prev</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        <div id="image"></div>
+        <div id="receipt"></div>
+        <div id="purchase"></div>
+    </body>
+</html>

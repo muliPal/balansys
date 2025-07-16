@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../outlook/v/zone"
+		},
+		{
+			"path": "../../../schema/v/code"
+		}
+	],
+	"settings": {}
+}

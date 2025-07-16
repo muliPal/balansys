@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            img{
+                width: 50%;
+                height: 50%;
+            }
+        </style>
+        <script type="module">
+
+            //Load the picture only after the window is loaded
+            window.onload = async() => {
+                //
+                //Fetch the blob form the php file
+                const image = await fetch('blob.php');
+                //
+                //
+                const blob = await image.blob();
+                //Get the image element form the document
+                const image_element = document.getElementById('receipt');
+                //
+                //Update the src with a url generated from the blog
+                image_element.src = URL.createObjectURL(blob);
+            };
+        </script>
+    </head>
+    <body>
+        <img id="receipt" />
+    </body>
+</html>

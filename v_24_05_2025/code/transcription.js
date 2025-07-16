@@ -138,7 +138,7 @@ export class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider 
                 #pagination in future
-                 limit 20
+                 #limit 200
             `;
         //
         //return the sql

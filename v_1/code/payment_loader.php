@@ -1,4 +1,5 @@
 <?php
+
 namespace mutall\capture;
 
 include '../../../schema/v/code/schema.php';
@@ -10,7 +11,7 @@ $q = new \mutall\questionnaire("balansys");
 //This is the mpesa table
 $table = new csv(
         'mpesa',
-        'D:/mutall_projects/balansys/data/mpesastatement2.csv'
+        'D:/mutall_projects/balansys/data/2024_expense.csv'
 );
 
 //
@@ -25,7 +26,7 @@ $layout = [
 ];
 //
 //Load the data using the most common method
-$result = $q -> load_common($layout);
+$result = $q->load_common($layout);
 //
 //print the q
 echo $result;

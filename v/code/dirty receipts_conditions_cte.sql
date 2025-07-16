@@ -4,7 +4,7 @@ WITH
 low_accuracy_receipts AS (
 select
     image.image,
-    receipt.accuracy,
+    consumer.name,
     image.full_name
 from
    image
@@ -15,7 +15,7 @@ where
     and consumer.name = "mutall"
 order by
     receipt.accuracy asc
-),
+)
 
 -- 2. Products named "item"
 products_named_item AS (
@@ -120,8 +120,9 @@ from
 where
    product.name = 'water bill'
    and consumer.name="mutall"
-)
+),
+
 
 -- Choose the CTE to SELECT from below
-SELECT * FROM null_purchase_units;
+SELECT * FROM low_accuracy_receipts;
 -- Example: SELECT * FROM products_named_item;

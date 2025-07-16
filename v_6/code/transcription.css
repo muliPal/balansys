@@ -1,0 +1,46 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+* {
+    margin: 0;
+
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+        'file receipt'
+        'image purchase';
+    grid-auto-columns: 50% 50%;
+    grid-template-rows: 20% 80%;
+}
+
+#file,#receipt,#purchase,#image{
+    border: solid 1px black;
+    overflow: scroll;
+}
+
+#file {
+    grid-area: file;
+}
+
+#receipt {
+    grid-area: receipt;
+}
+
+#purchase {
+    grid-area: purchase;
+
+}
+
+#image {
+    grid-area: image;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}

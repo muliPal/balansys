@@ -973,7 +973,7 @@ class receipt extends peer {
         #etr.staff_name as \`etr.staff_name\`,
         #etr.teller_num as \`etr.teller_num\`,
         #etr.invoice_num as \`etr.invoice_num\`,
-        receipt.description as \`receipt.description\`,
+        receipt.observation as \`receipt.observation\`,
         receipt.validated as \`receipt.validated\`,
         intern.name as \`intern.name\`
     from

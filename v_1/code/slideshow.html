@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>slideshow</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </head>
+    <body>
+        <div class="slideshow-container">
+            <!-- transition of my images . -->
+
+            <div class="mySlides fade">
+                <img src="bmj.jpg" alt="bmj" style="width:7%">
+            </div>
+            <div class="mySlides fade">
+                <img src="bmj.jpg" alt="bmj" style="width:60%">
+            </div>
+        </div>
+            <script>
+                let slideIndex = 0;
+                showSlides();
+                //hiding images that are not being displayed 
+                function showSlides() {
+                    let i;
+                    const slides = document.getElementsByClassName("mySlides");
+                    for (i = 0; i < slides.length; i++) {
+                        slides[i].style.display = "none";
+                    }
+                    //ensuring free flow of my images 
+                    slideIndex++;
+                    if (slideIndex > slides.length) {
+                        slideIndex = 1
+                    }
+                    //
+                    slides[slideIndex - 1].style.display = "block";
+                    setTimeout(showSlides, 1000);
+                }
+            </script>
+    </body>
+</html>

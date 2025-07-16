@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Display First Image in Table</title>
+    </head>
+    <body>
+        <h1>First Image in Table</h1>
+
+        <!-- Table to display the image -->
+        <table id="image-table" border="1">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Image Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- JavaScript will dynamically insert rows here -->
+            </tbody>
+        </table>
+
+        <script>
+            // When the page loads, fetch the image data from the PHP file
+            window.onload = async () => {
+                try {
+                    // Fetch the image data from the PHP file
+                    const response = await fetch('img.php'); // Replace with your PHP file path
+                    const images = await response.json();
+
+                    // Get the table body where rows will be inserted
+                    const tableBody = document.querySelector('#image-table tbody');
+
+                    // Check if any images were returned
+                    if (images.length > 0) {
+                        // Loop through the images array and create rows dynamically
+                        images.forEach(image => {
+                            // Create a new table row
+                            const tr = document.createElement('tr');
+
+                            // Create a table cell (td) for the image
+                            const imageTd = document.createElement('td');
+                            const imgElement = document.createElement('img');
+                            imgElement.src = image.image_name;  // Use the image URL from the database
+                            imgElement.alt = 'Image';
+                            imgElement.style.width = '150px';  // Set the image width
+                            imageTd.appendChild(imgElement);   // Add the image to the td
+
+                            // Create a table cell (td) for the image name (URL)
+                            const nameTd = document.createElement('td');
+                            nameTd.textContent = image.image_name;  // Set the image name in the td
+
+                            // Append the tds to the row
+                            tr.appendChild(imageTd);
+                            tr.appendChild(nameTd);
+
+                            // Append the row to the table body
+                            tableBody.appendChild(tr);
+                        });
+                    } else {
+                        // If no images were found, show a message
+                        const noImageMessage = document.createElement('tr');
+                        noImageMessage.innerHTML = '<td colspan="2">No images found in the database.</td>';
+                        tableBody.appendChild(noImageMessage);
+                    }
+                } catch (error) {
+                    console.error("Error fetching images: ", error);
+                }
+            };
+        </script>
+    </body>
+</html>

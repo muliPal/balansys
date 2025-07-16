@@ -1,0 +1,63 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+* {
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-areas:
+        'file receipt'
+        'button purchase'
+        'image purchase'
+        'footer footer';
+    grid-auto-columns: 60% 40%;
+    grid-template-rows: 20% 5% 65% 10%;
+    overflow: hidden;
+}
+
+#file {
+    grid-area: file;
+    background-color: #e1f5fe; /* Light sky blue */
+    overflow: scroll;
+}
+
+#button {
+    grid-area: button;
+    background-color: #ffecb3; /* Soft beige */
+}
+
+#receipt {
+    grid-area: receipt;
+    background-color: #f3e5f5; /* Soft lavender */
+    overflow: scroll;
+}
+
+#purchase {
+    grid-area: purchase;
+    background-color: #c8e6c9; /* Light pastel green */
+    overflow: scroll;
+}
+
+#image {
+    grid-area: image;
+    background-color: #e3f2fd; /* Light blue-gray */
+    overflow: scroll;
+
+}
+
+#footer {
+    grid-area: footer;
+    background-color: #37474f; /* Charcoal gray */
+    color: white; /* White text for contrast */
+}
+
+img {
+    width: 100%;
+    height: auto;
+}

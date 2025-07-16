@@ -1,0 +1,11 @@
+{
+    "extends": "../../../schema/v/code/tsconfig.json",
+    "compilerOptions": {
+    },
+    "exclude": [
+        "postek2.ts",
+        "postek1.ts",
+        "stock.ts"
+    ]
+  }
+  

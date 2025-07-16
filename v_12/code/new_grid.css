@@ -1,0 +1,70 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: grid;
+    grid-template-areas:
+        'consumer receipt'
+        'file receipt'
+        'image supplier'
+        'image purchase';
+    grid-template-rows: 20% 20% 20% 40%; /* Adjust row sizes */
+    grid-template-columns: 50% 50%; /* Adjust column sizes */
+}
+
+.consumer {
+    grid-area: consumer;
+}
+.file {
+    grid-area: file;
+}
+.image {
+    grid-area: image;
+}
+.receipt {
+    grid-area: receipt;
+}
+.supplier {
+    grid-area: supplier;
+}
+.purchase {
+    grid-area: purchase; /* Fixed duplicate area name */
+}
+.consumer, .file, .image, .receipt, .supplier, .purchase{
+    border: solid 1px black;
+}
+/* Default styles for items */
+.container .item {
+    display: inline-block;
+    background-color: lightblue;
+    color: black;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* Style for the active (selected) item */
+.container:has(input:checked) .item {
+    background-color: lightgray;
+    color: darkgray;
+    pointer-events: none; /* Deactivates the non-selected items */
+}
+
+/* Style for the currently selected item */
+.container input:checked + .item {
+    background-color: lightblue;
+    color: black;
+    pointer-events: auto;
+    border: 1px solid blue;
+}

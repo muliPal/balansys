@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CSS Media Queries Documentation</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 20px;
+            }
+            code {
+                background: #f4f4f4;
+                padding: 2px 4px;
+                border-radius: 4px;
+            }
+            pre {
+                background: #f4f4f4;
+                padding: 10px;
+                border-radius: 4px;
+                overflow-x: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>CSS Media Queries Documentation</h1>
+        <h2>Introduction</h2>
+        <p>CSS Media Queries allow developers to apply styles based on a device's characteristics such as width, height, orientation, resolution, and more. This makes responsive design possible, ensuring web pages look good on various screen sizes.</p>
+
+        <h2>Basic Syntax</h2>
+        <pre><code>@media (condition) {
+}</code></pre>
+
+        <h3>Example:</h3>
+        <pre><code>body {
+    background-color: white;
+}
+
+@media (max-width: 600px) {
+    body {
+        background-color: lightgray;
+    }
+}</code></pre>
+
+        <h2>Common Media Query Breakpoints</h2>
+        <ul>
+            <li><strong>Extra small devices (phones)</strong>: <code>max-width: 480px</code></li>
+            <li><strong>Small devices (tablets in portrait mode)</strong>: <code>max-width: 768px</code></li>
+            <li><strong>Medium devices (tablets in landscape mode, small laptops)</strong>: <code>max-width: 992px</code></li>
+            <li><strong>Large devices (desktops, laptops)</strong>: <code>max-width: 1200px</code></li>
+            <li><strong>Extra large devices (large desktops, TVs)</strong>: <code>min-width: 1201px</code></li>
+        </ul>
+
+        <h2>Media Query Features</h2>
+        <h3>1. Width and Height</h3>
+        <pre><code>@media (min-width: 768px) {
+    body {
+        font-size: 18px;
+    }
+}</code></pre>
+
+        <h3>2. Orientation</h3>
+        <pre><code>@media (orientation: landscape) {
+    body {
+        background-color: lightblue;
+    }
+}</code></pre>
+
+        <h3>3. Resolution</h3>
+        <pre><code>@media (min-resolution: 300dpi) {
+    img {
+        width: 200px;
+    }
+}</code></pre>
+
+        <h2>Combining Multiple Conditions</h2>
+        <pre><code>@media (min-width: 600px) and (max-width: 1200px) {
+    body {
+        background-color: yellow;
+    }
+}</code></pre>
+
+        <h2>Using Media Queries in HTML & JavaScript</h2>
+        <h3>1. In HTML (for Responsive Images)</h3>
+        <pre><code>&lt;picture&gt;
+    &lt;source media="(max-width: 600px)" srcset="small.jpg"&gt;
+    &lt;source media="(max-width: 1200px)" srcset="medium.jpg"&gt;
+    &lt;img src="large.jpg" alt="Responsive Image"&gt;
+&lt;/picture&gt;</code></pre>
+
+        <h3>2. In JavaScript (Using <code>matchMedia</code>)</h3>
+        <pre><code>if (window.matchMedia("(max-width: 600px)").matches) {
+    console.log("Screen is less than 600px wide");
+}</code></pre>
+
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Mobile-First Approach:</strong> Start designing for smaller screens and add media queries for larger screens.</li>
+            <li><strong>Use Relative Units:</strong> Use <code>em</code>, <code>%</code>, or <code>rem</code> instead of fixed <code>px</code> values.</li>
+            <li><strong>Group Media Queries:</strong> Instead of scattering media queries, group them together for better readability.</li>
+            <li><strong>Test on Real Devices:</strong> Use browser dev tools and actual devices for testing.</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>Media Queries are essential for creating responsive websites. By using them effectively, you can ensure that your website looks great on all devices.</p>
+    </body>
+</html>
+

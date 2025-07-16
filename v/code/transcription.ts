@@ -2,10 +2,11 @@ import {
     grid, cell, root, table_options, plan, homozone, drivers, panel,
     driver_source
 } from "../../../outlook/v/zone/zone.js";
-import { view, label, mutall_error, basic_value, mymap, fuel} from "../../../schema/v/code/schema.js";
-import {resizer} from "../../../resizer/v/code/resize.js";
-import {select} from "./sql.js";
-// import {authoriser} from "../../../authoriser/v/code/authoriser.js"
+import { view, label, mutall_error, basic_value, mymap, fuel } from "../../../schema/v/code/schema.js";
+import { resizer } from "../../../resizer/v/code/resize.js";
+import { select } from "./sql.js";
+import { io } from "../../../schema/v/code/io.js";
+import { authoriser } from "../../../authoriser/v/code/authoriser.js";
 //
 //
 //A general panel purposely built for this transcription application
@@ -161,7 +162,7 @@ export abstract class peer extends mypanel {
                 #
                 #During this development phase, limit to 20 images. Consider
                 #pagination in future
-                limit 20
+                limit 200
             `;
         //
         //return the sql
@@ -235,7 +236,11 @@ export class transcription extends panel.group {
     // the show method
     async show(): Promise<void> {
         await super.show();
-        this.resizer=new resizer(this.document.body,{min_panel_size:40})
+        this.resizer = new resizer(document.body, {
+            min_panel_size: 25,
+            threshold: 5,
+        });
+        this.authoriser.launch_with_button('#login');
     }
     //
     //Zoom in to the selected image group member
@@ -606,28 +611,94 @@ class purchase extends mypanel {
         super(purchase.sql, 'purchase.purchase', '#purchase', options, parent);
     }
     //
-    //Here i was trying to get the value of the cell that i typed but i am only logging 
-    // a message instead of the value
-    // async onblur(cell: cell, evt?: Event): Promise<void> {
-    //     await super.onblur(cell, evt);
-
-    //     // Ensure the cell value is properly retrieved and trimmed
-    //     const value = cell.value?.toString().trim(); // Convert to string in case it's not
-
-    //     // Log the value of the cell, or indicate if it's empty
-    //     if (value) {
-    //         console.log("Cell value:", value);
-    //     } else {
-    //         console.log("Cell is empty or has no value.");
-    //     }
-    // }
-    // 
-    //Try logging the value of the cell 
+    //Here i implement onblur prefill using 'code' as my condition.
+    //If there is a similar code in the database, then i prefil the rest of the row with
+    //the appropriate data
     async onblur(cell: cell, evt?: Event): Promise<void> {
         await super.onblur(cell, evt);
-    
-        const value = cell?.value?.toString().trim();
-        console.log(value);
+        console.log('cell.value?.io');
+        //
+        // Step 1: Is this the cell of interest?if not, discontinue.
+        if (cell.index[1] !== 'code') return;
+        //
+        //2.The cell is of interest, use it to prefill the rest of the records.
+        //
+        //2.1.Get the code
+        const code: basic_value | undefined = cell.io?.value;
+        //
+        //If the code is undefined, discontinue this process.
+        if (code === undefined) return;
+        //
+        //If code is null, you discontinue
+        if (code === null) return;
+        //
+        //3.Formulate an sql for retrieving the desired data.
+        const sql: string = `
+        select
+                purchase.ref as ref,
+                product.code as code,
+                product.name as \`product.name\`,
+                purchase.qty as qty,
+                purchase.unit as unit,
+                purchase.price as price
+            from
+                purchase
+                inner join product on purchase.product=product.product
+        WHERE
+           code = '${code}'
+        `;
+        //
+        //4.Execute the sql to get some result.
+        const results: Array<fuel> = await this.exec_php(
+            'database',
+            ['balansys', false],
+            'get_sql_data',
+            [sql]);
+        //
+        //Test whether the result is empty
+        if (results.length === 0) return;
+        //
+        //5.Prefill the rest of the records with the appropriate data.
+        this.prefill(results, cell);
+    }
+    //
+    //Prefill the rest of the record with the appropriate results.
+    //ref is the cell from which i lost focus.
+    prefill(results: Array<fuel>, ref: cell): void {
+        //
+        // 1. Get the first result (assuming one result per code)
+        const data: fuel = results[0];
+        //
+        // 2. Access the row index of the cell
+        const row: string = ref.index[0];
+        //
+        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
+        const parent: homozone = ref.parent;
+        //
+        //Go through the data keys using them as the column index to retrieve
+        // and fill the corresponding cell
+        //
+        //Ensure the parent has cells indexed.
+        if (parent.cells_indexed === undefined) throw new mutall_error('indexed cells not found');
+        //
+        //Go through the keys and for each key, identify the corresponding
+        //  cell and fill its value with appropriate data.
+        for (const key in data) {
+            //
+            //Get the cell
+            const input_cell: cell = parent.cells_indexed[row][key]
+            //
+            //Proceed to filling the corresponding cells with appropriate data.
+            //
+            //Get the io of the cell
+            const input_io: io | undefined = input_cell.io;
+            //
+            //Ensure io is present before proceeding to set the value.
+            if (input_io === undefined) throw new mutall_error('io was not found');
+            //
+            //Set the value of the io to the value of the the current key in the data object
+            input_io.value = data[key];
+        }
     }
 
     //Override the default show panel behavior so that if no image is available
@@ -788,18 +859,17 @@ export class supplier extends mypanel {
         if (supplier_name === undefined) return;
         //
         //If supplier name is null, you discontinue
-        if(supplier_name === null)return;
-        //
+        if (supplier_name === null) return;
         //
         //3.Formulate an sql for retrieving the desired data.
-        const sql:string =`
-        SELECT 
-            business.title,
-            business.tel,
-            business.email,
-            business.address,
-            business.pin
-        FROM 
+        const sql: string = `
+        SELECT
+            business.title as \`business.title:supplier\`,
+            business.tel \`business.tel:supplier\`,
+            business.email \`business.email:supplier\`,
+            business.address \`business.address:supplier\`,
+            supplier.pin \`supplier.pin:supplier\`
+        FROM
             business
             inner join supplier on supplier.business= business.business
 
@@ -815,28 +885,52 @@ export class supplier extends mypanel {
             [sql]);
         //
         //Test whether the result is empty
-         if (results.length === 0) return;
-    
-        //5. ..otherwise we prefill the rest of the records with the appropriate data.  
-        // const supplierData = results[0];
+        if (results.length === 0) return;
         //
-        const supplierData = results[0];
-        const rowIndex = cell.index[0]; // get row index from current cell
-    
-        // Step 5: Use cells_indexed to set values in the same row
-        for (const [key, value] of Object.entries(supplierData)) {
-            // Skip name, already handled
-            if (key === "name") continue;
-    
-            // Get the target cell using the key as the column name
-            const targetCell: cell | undefined = this.cells_indexed?.[rowIndex]?.[key];
-    
-            if (targetCell) {
-                targetCell.value = value;
-            }
+        //5.Prefill the rest of the records with the appropriate data.
+        this.prefill(results, cell);
+    }
+    //
+    //Prefill the rest of the record with the appropriate results.
+    //ref is the cell from which i lost focus.
+    prefill(results: Array<fuel>, ref: cell): void {
+        //
+        // 1. Get the first result (assuming one result per supplier)
+        const data: fuel = results[0];
+        //
+        // 2. Access the row index of the cell
+        const row: string = ref.index[0];
+        //
+        //Get the parent homozone of the cell, This will help us to get the adjuscent cells to it.
+        const parent: homozone = ref.parent;
+        //
+        //Go through the data keys using them as the column index to retrieve
+        // and fill the corresponding cell
+        //
+        //Ensure the parent has cells indexed.
+        if (parent.cells_indexed === undefined) throw new mutall_error('indexed cells not found');
+        //
+        //Go through the keys and for each key, identify the corresponding
+        //  cell and fill its value with appropriate data.
+        for (const key in data) {
+            //
+            //Get the cell
+            const input_cell: cell = parent.cells_indexed[row][key]
+            //
+            //Proceed to filling the corresponding cells with appropriate data.
+            //
+            //Get the io of the cell
+            const input_io: io | undefined = input_cell.io;
+            //
+            //Ensure io is present before proceeding to set the value.
+            if (input_io === undefined) throw new mutall_error('io was not found');
+            //
+            //Set the value of the io to the value of the the current key in the data object
+            input_io.value = data[key];
         }
-    }  
-     //
+
+    }
+    //
     //Show the first/only row for a consumer selection.
     async show_selection(): Promise<void> {
         //
@@ -926,7 +1020,10 @@ class receipt extends peer {
         receipt.receipt as \`receipt.receipt\`,
         #
         receipt.ref as \`receipt.ref\`,
-       
+		#
+		#The accuracy of gemini transcribing the receipt
+		receipt.accuracy,
+
         receipt.date as \`receipt.date\`,
         receipt.amount as \`receipt.amount\`,
         receipt.vat as \`receipt.vat\`,
@@ -935,7 +1032,9 @@ class receipt extends peer {
         #etr.staff_name as \`etr.staff_name\`,
         #etr.teller_num as \`etr.teller_num\`,
         #etr.invoice_num as \`etr.invoice_num\`,
-        receipt.description as \`receipt.description\`
+        receipt.observation as \`receipt.observation\`,
+        receipt.validated as \`receipt.validated\`,
+        intern.name as \`intern.name\`
     from
         receipt
         #
@@ -998,18 +1097,22 @@ class receipt extends peer {
                 //
                 //Supplier name is the same as the business name
                 ['supplier.name', {}, [undefined, 'business', 'name']],
+                //
+                // Display a checkbox for marking whether a receipt is validated.
+                ['receipt.validated', { type: 'checkbox', label: '✓' }],
             ],
         };
         //
         super(receipt.sql, 'image.image', '#receipt', options, parent);
     }
-    
+
 }
-//The panel that shows the actual scanned images of receipts 
-class image extends peer{
-        
-    static sql =`
-            select 
+
+//The panel that shows the actual scanned images of receipts
+class image extends peer {
+
+    static sql = `
+            select
                 #
                 #The row index of the file homozone
                 image.image as \`image.image\`,
@@ -1051,9 +1154,14 @@ class image extends peer{
                 ['image', { io_type: 'image' }],
             ]
         }
-        //    
-        super(image.sql, 'image.image',  '#image', options, parent);
-    }   
+        //
+        super(image.sql, 'image.image', '#image', options, parent);
+    }
+    async show(): Promise<void> {
+        await super.show();
+        //
+        // add the navigation buttons
+    }
 }
 
 //The panel that shows the scanned image files
