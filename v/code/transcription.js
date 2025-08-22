@@ -505,6 +505,8 @@ class purchase extends mypanel {
     //
     //Set the options to cause the onblur event to be raised on the creator.
     //let options:table_options ;
+    //
+    //const options:table_options={onblur:async(cell)=>this.prefill(cell)}
     //creator = new panel.creator(this, 1, options );
     creator = new panel.creator(this, 1);
     //
@@ -562,7 +564,6 @@ class purchase extends mypanel {
     //the appropriate data
     async onblur(cell, evt) {
         await super.onblur(cell, evt);
-        console.log('cell.value?.io');
         //
         // Step 1: Is this the cell of interest?if not, discontinue.
         if (cell.index[1] !== 'code')
@@ -993,7 +994,7 @@ class receipt extends peer {
     //The receipt panel cannot create be used for creating new entries
     //(but we can create images that intern creates receipts). There is
     // reviewer on the right that opens up a record and another one on the right
-    //that saves saves the record. Refreshing the panel is optional
+    //that saves  the record. Refreshing the panel is optional
     plan = [
         //
         //The headers. Give class names to headers to allow for easily freezing them
